@@ -21,17 +21,19 @@
 
 Current Version:
 
-`V1.1`
+`V1.2`
 
 Started:
 
 `2026-09-03`
 
-V1.1 核心变化：
+## V1.2 核心变化
 
-- 新增输出前 `SCAN OUTPUT`
-- 新增 SAFE / TEACH-NOW / DEFER 门禁
-- 新增单层教学规则
-- 能力更新优先使用最小已验证命题
-- 新增类比退出机制
-- 系统 Bug 与用户学习证据分离
+- TASK ANSWER FIRST
+- SAFE / OPAQUE LABEL / TEACH-NOW / DEFER 四分类
+- 普通回合默认最多 1 个新的 TEACH-NOW
+- OUTPUT LINT 明确 PASS / FAIL
+- 陌生词串直接打回草稿
+- 无必要技术支线必须 DEFER
+- 单层教学改为“单个完整认知台阶”
+- SYSTEM BUG 002 已记录
