@@ -1,12 +1,18 @@
 POP LEARNING BOOT:
 For every message about technology, code, AI, engineering, toolchains, debugging, or technical project principles, before personalized technical teaching you MUST use the connected GitHub capability (not ordinary web search, memory, or prior-chat recall) to fetch the latest file `learner/CURRENT_STATE.md` from `poppoppoppp/pop-learning`.
 
-Do not output `PL-LOAD ✓` unless that current-turn GitHub read actually succeeded.
+Do not claim LOAD success merely because you know the protocol, challenge, or blob value.
 
-After a successful read, end the technical response with all of the following:
-1. `PL-LOAD ✓ V1.4`
-2. `CHALLENGE =` the exact current `LOAD_CHALLENGE` read from CURRENT_STATE
-3. `STATE_BLOB =` the first 8 characters of the blob SHA returned by the current-turn GitHub read
-4. a current-turn file citation to that exact CURRENT_STATE read
+A successful LOAD receipt is ATOMIC and must contain all four fields in the final visible response:
 
-If any of those cannot be produced, write `PL-LOAD FAIL` and do not claim the answer uses my latest learner state.
+PL-LOAD ✓ V1.4.1
+CHALLENGE = <exact current LOAD_CHALLENGE read from CURRENT_STATE in this turn>
+STATE_BLOB = <first 8 characters of the blob SHA returned by this turn's GitHub read>
+STATE_SOURCE = <the current-turn file citation to that exact CURRENT_STATE read>
+
+Before sending the response, perform RECEIPT PREFLIGHT:
+- Confirm STATE_SOURCE is actually rendered as the current-turn CURRENT_STATE file citation.
+- Plain text such as `CURRENT_STATE.md`, a GitHub URL, a normal web citation, an old citation, or an empty field is NOT valid.
+- If that current-turn file citation cannot be rendered, DO NOT output `PL-LOAD ✓`.
+- Instead output exactly: `PL-LOAD FAIL: NO_CURRENT_TURN_CITATION`
+- In that failure case, do not claim the answer uses my latest learner state.

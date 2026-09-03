@@ -1,6 +1,6 @@
 # Pop Learning OS
 
-Version: V1.4
+Version: V1.4.1
 Started: 2026-09-03
 Updated: 2026-09-03
 
@@ -28,7 +28,7 @@ GitHub CURRENT_STATE
         ↓
 fresh LOAD
         ↓
-LOAD RECEIPT
+ATOMIC LOAD RECEIPT
         ↓
 Gate A PASS
         ↓
@@ -43,9 +43,9 @@ GitHub 仓库：
 
 ---
 
-# 二、V1.4 运行链
+# 二、V1.4.1 运行链
 
-`BOOT -> LOAD GATE -> LOAD RECEIPT -> SCAN INPUT -> TASK ANSWER -> BRIDGE PLAN -> DRAFT -> OUTPUT LINT -> TEACH -> VERIFY -> RECORD -> UPDATE`
+`BOOT -> LOAD GATE -> BUILD RECEIPT -> RECEIPT PREFLIGHT -> SCAN INPUT -> TASK ANSWER -> BRIDGE PLAN -> DRAFT -> OUTPUT LINT -> TEACH -> VERIFY -> RECORD -> UPDATE`
 
 ---
 
@@ -74,92 +74,108 @@ GitHub 仓库：
 
 ---
 
-# 四、V1.4 LOAD RECEIPT
+# 四、V1.4.1 ATOMIC LOAD RECEIPT
 
-V1.3 的问题：
+V1.4 已经要求：
 
-> `PL-LOAD ✓` 是固定字符串，模型可以照抄。
+- PL-LOAD
+- CHALLENGE
+- STATE_BLOB
+- current-turn CURRENT_STATE citation
 
-因此 V1.4 要求回答末尾同时提供：
+真实测试发现：
+
+> 模型能正确输出前三项，却把 citation 漏掉。
+
+所以 V1.4.1 不再把 citation 写成“另外附上”。
+
+成功收据必须是一个四字段原子块：
 
 ```text
-PL-LOAD ✓ V1.4
+PL-LOAD ✓ V1.4.1
 CHALLENGE = <CURRENT_STATE 当前 LOAD_CHALLENGE>
 STATE_BLOB = <GitHub 本回合返回 blob SHA 前 8 位>
+STATE_SOURCE = <本回合 CURRENT_STATE file citation>
 ```
 
-并附：
+---
 
-> 本回合 `learner/CURRENT_STATE.md` 文件引用。
+# 五、RECEIPT PREFLIGHT
 
-Gate A 只有四项同时存在才 PASS。
+在发送最终回答之前，必须检查：
+
+> `STATE_SOURCE` 是否真正包含本回合 CURRENT_STATE file citation。
+
+以下内容全部无效：
+
+- `STATE_SOURCE = CURRENT_STATE.md`
+- `STATE_SOURCE = https://github.com/...`
+- 普通 Web citation
+- 旧回合 file citation
+- 空 STATE_SOURCE
+- 根本没有 STATE_SOURCE
+
+若无效：
+
+> 禁止输出 `PL-LOAD ✓`。
+
+必须输出：
+
+`PL-LOAD FAIL: NO_CURRENT_TURN_CITATION`
+
+这一步优先于“把前三项成功字段打印出来”。
 
 ---
 
-# 五、LOAD_CHALLENGE 的作用和边界
+# 六、LOAD_CHALLENGE
 
-`LOAD_CHALLENGE`：
+CURRENT_STATE 实质更新时轮换。
 
-- 放在 CURRENT_STATE 顶部；
-- CURRENT_STATE 实质更新时轮换；
-- 用来发现 stale load。
+V1.4.1 当前 challenge：
 
-它不是单独的 fresh-load 证明。
+`PL141-98D762B0`
 
-原因：
+用途：
 
-> 旧对话可能记得旧 challenge。
+> 检测 stale load。
 
-因此：
-
-`CHALLENGE != citation`
-
-挑战码不能代替本回合文件引用。
+它不是秘密，也不是单独证明。
 
 ---
 
-# 六、STATE_BLOB
+# 七、STATE_BLOB
 
-GitHub 读取文件时会返回当前文件 blob SHA。
+回答返回：
 
-回答只需返回前 8 位。
+> 本回合 GitHub fetch_file 得到的 CURRENT_STATE blob SHA 前 8 位。
 
-作用：
-
-- 增加读取结果的具体性；
-- 帮助发现读错文件 / 旧状态；
-- 与 challenge、citation 形成组合证据。
-
-STATE_BLOB 也不能单独替代 citation。
+它增加读取结果具体性，但不能代替 STATE_SOURCE。
 
 ---
 
-# 七、Gate A 判定
+# 八、Gate A 判定
 
 ## PASS
 
 必须同时满足：
 
 1. fresh-read CURRENT_STATE
-2. 正确 `PL-LOAD ✓ V1.4`
-3. 正确当前 `CHALLENGE`
-4. 本回合 GitHub 返回的 `STATE_BLOB`
-5. 本回合 CURRENT_STATE 文件引用
+2. `PL-LOAD ✓ V1.4.1`
+3. 正确当前 CHALLENGE
+4. 正确本回合 STATE_BLOB
+5. `STATE_SOURCE` 是本回合 CURRENT_STATE file citation
 
 ## FAIL
 
-以下任一即 FAIL：
+任一缺失即 FAIL。
 
-- 只有 `PL-LOAD ✓`
-- 有 challenge 没 citation
-- 有 citation 但不是 CURRENT_STATE
-- blob 与当前读取结果不一致
-- 使用 Web GitHub 页面代替连接器读取
-- 读取失败却仍声称使用最新能力地图
+尤其：
+
+> 前三项全部正确但没有 STATE_SOURCE，仍然 FAIL。
 
 ---
 
-# 八、Gate B
+# 九、Gate B
 
 Gate A PASS 后才验：
 
@@ -172,27 +188,23 @@ Gate A PASS 后才验：
 - RECORD
 - UPDATE
 
-Gate A FAIL 时：
-
-> 不对 Gate B 给出“系统通过”结论。
+V1.4.1 不修改 Gate B。
 
 ---
 
-# 九、系统限制
+# 十、系统限制
 
-当前机制提高“有没有 fresh-read”的可验证性，但不是密码学证明。
+这仍不是密码学证明。
 
-尤其：
+Challenge 与 blob 在状态未变化时可能保持不变。
 
-- challenge 在状态更新之间保持不变；
-- blob 在文件未变化时保持不变；
-- 所以真正最重要的仍然是本回合 CURRENT_STATE 文件引用。
+最关键证据仍然是：
 
-系统不夸大保证。
+> current-turn CURRENT_STATE file citation。
 
 ---
 
-# 十、Checkpoint 与持久化
+# 十一、Checkpoint 与持久化
 
 如果 GitHub 写权限不可用：
 
@@ -202,7 +214,7 @@ Gate A FAIL 时：
 
 ---
 
-# 十一、Public 仓库安全
+# 十二、Public 仓库安全
 
 严禁保存：
 

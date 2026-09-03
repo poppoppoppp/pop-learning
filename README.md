@@ -4,13 +4,13 @@
 
 Current Version:
 
-`V1.4`
+`V1.4.1`
 
 Started:
 
 `2026-09-03`
 
-# V1.4 Gate A
+# V1.4.1 Gate A
 
 ```text
 Custom Instructions
@@ -19,20 +19,21 @@ connected GitHub fresh-read
         ↓
 CURRENT_STATE
         ↓
-PL-LOAD ✓ V1.4
-+
-CHALLENGE
-+
-STATE_BLOB
-+
-current-turn file citation
+ATOMIC LOAD RECEIPT
         ↓
-Gate A PASS
+PL-LOAD
+CHALLENGE
+STATE_BLOB
+STATE_SOURCE
+        ↓
+RECEIPT PREFLIGHT
+        ↓
+Gate A PASS / FAIL
 ```
 
 Current LOAD_CHALLENGE:
 
-`PL14-EC78FCAD`
+`PL141-98D762B0`
 
 # 核心入口
 
@@ -44,9 +45,10 @@ Current LOAD_CHALLENGE:
 - `system/BOOT_GATE.md`
 - `system/CHANGELOG.md`
 
-# 原则
+# V1.4.1 核心变化
 
-- GitHub = 动态真相源
-- Custom Instructions = BOOT POINTER
-- current-turn CURRENT_STATE citation = 最关键 LOAD 证据
-- challenge / blob = 辅助检测 stale / wrong load
+- citation 不再是“另外附上”
+- `STATE_SOURCE` 是成功收据内部必填字段
+- current-turn file citation 无法渲染时：
+  `PL-LOAD FAIL: NO_CURRENT_TURN_CITATION`
+- Gate B 教学规则不变

@@ -1,57 +1,72 @@
 # Current Learning State
 
 Updated: 2026-09-03
-Baseline: V1.4
+Baseline: V1.4.1
 
 # RUNTIME CARD
 
-PROTOCOL = V1.4
-LOAD_CHALLENGE = PL14-EC78FCAD
+PROTOCOL = V1.4.1
+LOAD_CHALLENGE = PL141-98D762B0
 
-> `LOAD_CHALLENGE` 在每次 CURRENT_STATE 发生实质更新时更换。
-> 它用于发现 stale load（读了旧状态），不是单独的 fresh-load 证明。
+> `LOAD_CHALLENGE` 在 CURRENT_STATE 实质更新时轮换。
+> 它用于发现 stale load，不是单独的 fresh-load 证明。
 
 ## GATE A — BOOT / LOAD
 
-技术、代码、AI、工程、工具链、项目原理相关回答前：
+任何技术、代码、AI、工程、工具链、项目原理相关回答前：
 
-1. 必须使用已连接的 GitHub 读取能力，fresh-read：
+1. 必须使用已连接的 GitHub 读取能力 fresh-read：
    `poppoppoppp/pop-learning/learner/CURRENT_STATE.md`
-2. 不允许用普通 Web 搜索、旧聊天、Memory 或“我记得”替代这一步。
-3. 读取成功后，从 GitHub 返回结果取得：
+2. 不允许用普通 Web 搜索、旧聊天、Memory、旧 citation 或“我记得”替代。
+3. 读取成功后取得：
    - 当前 `PROTOCOL`
    - 当前 `LOAD_CHALLENGE`
    - 当前文件 blob SHA
-   - 当前回合文件引用
-4. 正常个性化技术回答末尾必须包含：
+   - 本回合 CURRENT_STATE 文件引用
+
+## ATOMIC LOAD RECEIPT
+
+成功收据必须作为一个不可拆分的四字段块输出：
 
 ```text
-PL-LOAD ✓ V1.4
-CHALLENGE = <本回合读到的 LOAD_CHALLENGE>
-STATE_BLOB = <本回合 GitHub 返回的 blob SHA 前 8 位>
+PL-LOAD ✓ V1.4.1
+CHALLENGE = <本回合 CURRENT_STATE 中的 LOAD_CHALLENGE>
+STATE_BLOB = <本回合 GitHub 返回 blob SHA 前 8 位>
+STATE_SOURCE = <本回合 CURRENT_STATE file citation>
 ```
 
-并紧跟本回合 `CURRENT_STATE.md` 的 GitHub 文件引用。
+### 核心硬规则
 
-5. 缺任何一项：
-   `Gate A = FAIL`
-6. GitHub 读取失败：
-   `PL-LOAD FAIL`
+在最终回答发送前检查 `STATE_SOURCE`：
 
-## GATE A PASS 的必要条件
+- 如果 `STATE_SOURCE` 没有真正渲染为本回合 `CURRENT_STATE.md` 的文件引用；
+- 如果只有普通文字 `CURRENT_STATE.md`；
+- 如果只有 GitHub URL；
+- 如果是普通 Web citation；
+- 如果是旧回合 citation；
 
-必须同时满足：
+则：
 
-- `PL-LOAD ✓ V1.4`
-- `CHALLENGE` 与当前 CURRENT_STATE 一致
-- `STATE_BLOB` 来自本回合 GitHub 返回结果
-- 存在本回合 CURRENT_STATE 文件引用
+> 禁止输出 `PL-LOAD ✓`。
 
-注意：
+必须改为：
 
-> `PL-LOAD ✓` 字样本身没有证明力。
-> CHALLENGE 本身也没有证明力。
-> 四项组合才作为当前系统的可验证收据。
+`PL-LOAD FAIL: NO_CURRENT_TURN_CITATION`
+
+并且不得声称回答使用了最新个人能力地图。
+
+### Gate A PASS
+
+只有同时满足以下四项才 PASS：
+
+1. `PL-LOAD ✓ V1.4.1`
+2. CHALLENGE 与当前 CURRENT_STATE 一致
+3. STATE_BLOB 来自本回合 GitHub fetch 结果
+4. STATE_SOURCE 是本回合 CURRENT_STATE file citation
+
+缺任一项：
+
+`Gate A = FAIL`
 
 ---
 
@@ -195,15 +210,23 @@ Safe Anchor：
 
 # 当前系统重点
 
-V1.3 冷启动测试暴露：
+V1.4 冷启动测试：
 
-- 新对话输出了 `PL-LOAD ✓ V1.3`
-- 但没有 CURRENT_STATE 的本回合引用
-- 因此无法证明实际 fresh-read
-- 静态字符串可以被照抄，不能视作证明
+- `PL-LOAD ✓ V1.4` 正确
+- `CHALLENGE` 正确
+- `STATE_BLOB` 正确
+- 但原 UI 中没有 CURRENT_STATE citation
 
-V1.4 当前第一优先级：
+因此：
 
-> 把 LOAD 证明从“自我声明”升级为“多字段收据”。
+`Gate A = FAIL`
+
+V1.4.1 只修这一点：
+
+> citation 从“额外附上”升级为成功收据内部的必填 `STATE_SOURCE` 字段。
+
+如果 source citation 无法渲染：
+
+> success receipt 不得存在。
 
 BOOT / LOAD 与 Teaching / Output 继续分开验收。
