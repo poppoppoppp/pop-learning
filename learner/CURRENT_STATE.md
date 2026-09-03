@@ -1,14 +1,14 @@
 # Current Learning State
 
 Updated: 2026-09-03
-Baseline: V1.4.1
+Baseline: V1.4.2
 
 # RUNTIME CARD
 
-PROTOCOL = V1.4.1
-LOAD_CHALLENGE = PL141-98D762B0
+PROTOCOL = V1.4.2
+LOAD_CHALLENGE = PL142-AE7AFDCB
 
-> `LOAD_CHALLENGE` 在 CURRENT_STATE 实质更新时轮换。
+> LOAD_CHALLENGE 在 CURRENT_STATE 实质更新时轮换。
 > 它用于发现 stale load，不是单独的 fresh-load 证明。
 
 ## GATE A — BOOT / LOAD
@@ -19,50 +19,67 @@ LOAD_CHALLENGE = PL141-98D762B0
    `poppoppoppp/pop-learning/learner/CURRENT_STATE.md`
 2. 不允许用普通 Web 搜索、旧聊天、Memory、旧 citation 或“我记得”替代。
 3. 读取成功后取得：
-   - 当前 `PROTOCOL`
-   - 当前 `LOAD_CHALLENGE`
+   - 当前 PROTOCOL
+   - 当前 LOAD_CHALLENGE
    - 当前文件 blob SHA
    - 本回合 CURRENT_STATE 文件引用
 
-## ATOMIC LOAD RECEIPT
+## CITATION-COMPATIBLE LOAD RECEIPT
 
-成功收据必须作为一个不可拆分的四字段块输出：
+成功收据由四个字段组成，但：
 
-```text
-PL-LOAD ✓ V1.4.1
-CHALLENGE = <本回合 CURRENT_STATE 中的 LOAD_CHALLENGE>
-STATE_BLOB = <本回合 GitHub 返回 blob SHA 前 8 位>
+> **绝对禁止把收据放进 fenced code block / 三反引号代码块。**
+
+原因：
+
+> file citation 是富引用 UI，代码块会阻止它正常渲染。
+
+最终回答末尾必须在普通 Markdown 中直接输出四项：
+
+PL-LOAD ✓ V1.4.2  
+CHALLENGE = <本回合 CURRENT_STATE 中的 LOAD_CHALLENGE>  
+STATE_BLOB = <本回合 GitHub 返回 blob SHA 前 8 位>  
 STATE_SOURCE = <本回合 CURRENT_STATE file citation>
-```
 
-### 核心硬规则
+### STATE_SOURCE 硬规则
 
-在最终回答发送前检查 `STATE_SOURCE`：
+STATE_SOURCE 必须：
 
-- 如果 `STATE_SOURCE` 没有真正渲染为本回合 `CURRENT_STATE.md` 的文件引用；
-- 如果只有普通文字 `CURRENT_STATE.md`；
-- 如果只有 GitHub URL；
-- 如果是普通 Web citation；
-- 如果是旧回合 citation；
+- 出现在普通 Markdown；
+- 不得位于反引号或代码围栏内；
+- 紧跟本回合 CURRENT_STATE file citation；
+- 引用必须真实渲染为可点击 / 可识别的文件引用。
 
-则：
+以下全部无效：
 
-> 禁止输出 `PL-LOAD ✓`。
+- `STATE_SOURCE =` 后为空；
+- 普通文字 CURRENT_STATE.md；
+- GitHub URL；
+- 普通 Web citation；
+- 旧回合 file citation；
+- citation 被包进代码块导致没有渲染。
 
-必须改为：
+### RECEIPT PREFLIGHT
 
-`PL-LOAD FAIL: NO_CURRENT_TURN_CITATION`
+发送最终回答前：
+
+1. 先确认 GitHub fresh-read 已成功；
+2. 再确认当前 citation 可作为普通 Markdown file citation 输出；
+3. 只有确认可输出时才打印 `PL-LOAD ✓ V1.4.2`；
+4. 如果 citation 无法渲染，禁止打印成功标记，改为：
+
+`PL-LOAD FAIL: NO_RENDERED_CURRENT_TURN_CITATION`
 
 并且不得声称回答使用了最新个人能力地图。
 
 ### Gate A PASS
 
-只有同时满足以下四项才 PASS：
+必须同时满足：
 
-1. `PL-LOAD ✓ V1.4.1`
+1. `PL-LOAD ✓ V1.4.2`
 2. CHALLENGE 与当前 CURRENT_STATE 一致
-3. STATE_BLOB 来自本回合 GitHub fetch 结果
-4. STATE_SOURCE 是本回合 CURRENT_STATE file citation
+3. STATE_BLOB 来自本回合 GitHub fetch
+4. STATE_SOURCE 是普通 Markdown 中真实渲染的本回合 CURRENT_STATE file citation
 
 缺任一项：
 
@@ -210,23 +227,22 @@ Safe Anchor：
 
 # 当前系统重点
 
-V1.4 冷启动测试：
+V1.4.1 冷启动测试：
 
-- `PL-LOAD ✓ V1.4` 正确
-- `CHALLENGE` 正确
-- `STATE_BLOB` 正确
-- 但原 UI 中没有 CURRENT_STATE citation
+- PL-LOAD 正确
+- CHALLENGE 正确
+- STATE_BLOB 正确
+- STATE_SOURCE 字段出现
+- 但 STATE_SOURCE 为空
 
-因此：
+观察到整张收据被模型输出在 fenced code block 中。
 
-`Gate A = FAIL`
+根因：
 
-V1.4.1 只修这一点：
+> V1.4.1 用“block / 四字段块”的语言和代码围栏示例，诱导模型把富 file citation 放进代码块；citation 无法正常渲染。
 
-> citation 从“额外附上”升级为成功收据内部的必填 `STATE_SOURCE` 字段。
+V1.4.2 只修：
 
-如果 source citation 无法渲染：
+> 收据必须在普通 Markdown 中输出，严禁代码块。
 
-> success receipt 不得存在。
-
-BOOT / LOAD 与 Teaching / Output 继续分开验收。
+Gate B 不变。

@@ -1,94 +1,76 @@
 # Pop Learning OS Changelog
 
-这里记录：
-
-> 教学系统自己的 Bug、修复和版本变化。
-
-不把系统失败写成用户能力缺陷。
+系统 Bug 与版本变化记录。
 
 ---
 
-# V1.4.1 — 2026-09-03
+# V1.4.2 — 2026-09-03
 
-## SYSTEM BUG 005 — Load Receipt 前三项正确，但 citation 被遗漏
+## SYSTEM BUG 006 — STATE_SOURCE 因代码块格式无法渲染
 
-### 测试结果
+### 测试现场
 
-V1.4 冷启动回答正确输出：
+V1.4.1 冷启动输出：
 
-- `PL-LOAD ✓ V1.4`
-- `CHALLENGE = PL14-EC78FCAD`
-- `STATE_BLOB = 5614b85a`
+- PL-LOAD ✓ V1.4.1
+- 正确 CHALLENGE
+- 正确 STATE_BLOB
+- `STATE_SOURCE =`
 
-但用户提供原始 ChatGPT UI 截图确认：
+但 STATE_SOURCE 为空。
 
-> 回答末尾没有 CURRENT_STATE 的 current-turn file citation。
+### 观察
 
-因此：
-
-`Gate A = FAIL`
+整张 receipt 被放入 fenced code block。
 
 ### 根因
 
-V1.4 把 citation 写成：
+V1.4.1 的：
 
-> 三个文本字段之后“再附 citation”。
+- “ATOMIC LOAD RECEIPT”
+- “四字段块”
+- fenced code 示例
 
-这允许模型先形成成功收据，再遗漏最后的 UI 引用。
+共同诱导模型把 receipt 当代码块输出。
+
+file citation 不能在代码块中正常渲染。
 
 ### 修复
 
-V1.4.1 引入：
+V1.4.2：
 
-1. `ATOMIC LOAD RECEIPT`
-2. `STATE_SOURCE` 作为第四个必填字段
-3. `RECEIPT PREFLIGHT`
-4. 无 current-turn citation 时禁止输出成功标记
-5. 固定失败码：
-   `PL-LOAD FAIL: NO_CURRENT_TURN_CITATION`
-
----
-
-## SYSTEM CHANGE 017 — STATE_SOURCE
-
-成功收据必须包含：
-
-`STATE_SOURCE = <current-turn CURRENT_STATE file citation>`
-
-普通文字、URL、Web citation、旧 citation 都无效。
+1. Receipt 必须使用普通 Markdown
+2. 严禁 fenced code block / inline code
+3. STATE_SOURCE 必须真实渲染 current-turn file citation
+4. 无法渲染则：
+   `PL-LOAD FAIL: NO_RENDERED_CURRENT_TURN_CITATION`
 
 ---
 
-## SYSTEM CHANGE 018 — Receipt Preflight
+## SYSTEM CHANGE 020 — Citation-Compatible Receipt
 
-发送最终回答前必须确认 citation 已实际渲染。
+Load Receipt 从“代码块式四字段”改为：
 
-没有：
-
-> 先撤销 success receipt，再输出 FAIL。
+> 普通 Markdown 四行收据。
 
 ---
 
-## SYSTEM CHANGE 019 — Challenge Rotation
+## SYSTEM CHANGE 021 — Render Preflight
 
-CURRENT_STATE 实质更新，因此 challenge 从：
+Preflight 不只检查字段存在，还检查：
 
-`PL14-EC78FCAD`
-
-轮换为：
-
-`PL141-98D762B0`
+> citation 是否实际可渲染。
 
 ---
 
-# V1.4 — 2026-09-03
+## SYSTEM CHANGE 022 — Challenge Rotation
 
-## SYSTEM BUG 004 — 静态 PL-LOAD 字符串可以被照抄
+CURRENT_STATE 实质更新，因此 challenge 轮换为：
 
-V1.4 加入：
+`PL142-AE7AFDCB`
 
-- LOAD_CHALLENGE
-- STATE_BLOB
-- current-turn citation 要求
+---
 
-真实测试证明前三项可以正确生成，但 citation 仍可能漏出，因此进入 V1.4.1。
+# V1.4.1
+
+修复 citation 作为第四必填字段，但格式示例导致 citation 渲染失败。

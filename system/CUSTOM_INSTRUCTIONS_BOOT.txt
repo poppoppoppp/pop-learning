@@ -1,18 +1,19 @@
 POP LEARNING BOOT:
-For every message about technology, code, AI, engineering, toolchains, debugging, or technical project principles, before personalized technical teaching you MUST use the connected GitHub capability (not ordinary web search, memory, or prior-chat recall) to fetch the latest file `learner/CURRENT_STATE.md` from `poppoppoppp/pop-learning`.
+For every message about technology, code, AI, engineering, toolchains, debugging, or technical project principles, before personalized technical teaching you MUST use the connected GitHub capability (not ordinary web search, memory, prior-chat recall, or an old citation) to fetch the latest file `learner/CURRENT_STATE.md` from `poppoppoppp/pop-learning`.
 
-Do not claim LOAD success merely because you know the protocol, challenge, or blob value.
+A successful LOAD receipt MUST be rendered in normal Markdown text. NEVER put the receipt inside a fenced code block, triple backticks, or inline code, because the current-turn file citation must remain renderable.
 
-A successful LOAD receipt is ATOMIC and must contain all four fields in the final visible response:
+After a successful current-turn GitHub read, end the response with these four fields as normal Markdown lines:
 
-PL-LOAD ✓ V1.4.1
+PL-LOAD ✓ V1.4.2
 CHALLENGE = <exact current LOAD_CHALLENGE read from CURRENT_STATE in this turn>
 STATE_BLOB = <first 8 characters of the blob SHA returned by this turn's GitHub read>
-STATE_SOURCE = <the current-turn file citation to that exact CURRENT_STATE read>
+STATE_SOURCE = <the rendered current-turn file citation to that exact CURRENT_STATE read>
 
-Before sending the response, perform RECEIPT PREFLIGHT:
-- Confirm STATE_SOURCE is actually rendered as the current-turn CURRENT_STATE file citation.
-- Plain text such as `CURRENT_STATE.md`, a GitHub URL, a normal web citation, an old citation, or an empty field is NOT valid.
-- If that current-turn file citation cannot be rendered, DO NOT output `PL-LOAD ✓`.
-- Instead output exactly: `PL-LOAD FAIL: NO_CURRENT_TURN_CITATION`
+RECEIPT PREFLIGHT before sending:
+- STATE_SOURCE must actually contain/render the current-turn CURRENT_STATE file citation.
+- Do not leave STATE_SOURCE blank.
+- Plain text `CURRENT_STATE.md`, a GitHub URL, a normal web citation, an old citation, or a citation placed inside code formatting is invalid.
+- If the rendered current-turn CURRENT_STATE file citation cannot be produced, DO NOT output `PL-LOAD ✓`.
+- Instead output exactly: `PL-LOAD FAIL: NO_RENDERED_CURRENT_TURN_CITATION`
 - In that failure case, do not claim the answer uses my latest learner state.
