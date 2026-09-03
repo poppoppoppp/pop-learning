@@ -1,89 +1,121 @@
 # Current Learning State
 
 Updated: 2026-09-03
-Baseline: V1.4.3
+Baseline: V1.5
 
 # RUNTIME CARD
 
-PROTOCOL = V1.4.3
-LOAD_CHALLENGE = PL143-3E871B2B
+PROTOCOL = V1.5
+STATE_CHALLENGE = PL15-0E828B7B
 
-## GATE A — BOOT / LOAD
+## GATE A — STATE FRESHNESS
 
 任何技术、代码、AI、工程、工具链、项目原理相关回答前：
 
 1. 使用 connected GitHub fresh-read：
    `poppoppoppp/pop-learning/learner/CURRENT_STATE.md`
-2. 不允许用 Web、Memory、旧聊天、旧 citation 替代。
+2. 不允许用普通 Web、Memory、旧聊天或旧状态替代这一步。
 3. 从本回合 GitHub 返回结果读取：
-   - LOAD_CHALLENGE
-   - blob SHA
-   - `Citation Marker`
+   - 当前 `PROTOCOL`
+   - 当前 `STATE_CHALLENGE`
+   - 当前文件 blob SHA
+4. 正常技术回答末尾只输出一个轻量状态戳：
 
-# CITATION MARKER COPY
+`PL-STATE ✓ V1.5 | CHALLENGE=<current> | BLOB=<current blob SHA first 8>`
 
-V1.4.2 的错误：
+5. GitHub 读取失败时：
 
-> 要求模型“确认 UI citation 已经渲染”。
+`PL-STATE FAIL`
 
-模型无法在发送前检查发送后的 UI 渲染。
+并且不得声称回答基于最新个人能力地图。
 
-V1.4.3 改为一个模型在发送前真正能执行的动作：
+## 重要语义
 
-> 找到本回合 GitHub 返回结果中的 `Citation Marker:`，把它后面的 marker 原样复制到最终回答。
+`PL-STATE ✓` 的含义是：
 
-例如工具结果如果显示：
+> 回答声称自己使用的学习状态身份是当前这份 GitHub 状态。
 
-`Citation Marker: <CURRENT-TURN-MARKER>`
+它不再声称：
 
-则最终回答中的 STATE_SOURCE 必须直接使用：
+> “这行文本本身证明了本回合一定发生了工具调用。”
 
-`STATE_SOURCE = <CURRENT-TURN-MARKER>`
+我们不再伪造一个 UI 无法稳定承载的“每回合工具调用证明”。
 
-不要自己生成 marker。
-不要写空白。
-不要只写 CURRENT_STATE.md。
-不要只写 GitHub URL。
+---
 
-## SOURCE-FIRST RECEIPT
+# COLD-START AUDIT
 
-成功标记必须最后输出。
+真正要验证：
 
-最终回答末尾使用普通 Markdown，顺序固定：
+> 新对话是否会自动去 GitHub LOAD
 
-STATE_SOURCE = <exact current-turn Citation Marker copied from GitHub result>  
-CHALLENGE = <current LOAD_CHALLENGE>  
-STATE_BLOB = <current blob SHA first 8 chars>  
-PL-LOAD ✓ V1.4.3
+使用审计流程，而不是依赖 citation UI。
 
-为什么 PASS 放最后：
+## 审计前
 
-> 先完成 source，再允许宣布成功。
+1. 在 CURRENT_STATE 中把 `STATE_CHALLENGE` 换成全新的随机值；
+2. push 到 GitHub；
+3. 不把新 challenge 告诉被测试的新对话；
+4. 因文件发生变化，blob SHA 也会随之变化。
 
-禁止把 receipt 放进代码块。
+## 审计
+
+开一个全新对话。
+
+不提：
+
+- Pop Learning
+- challenge
+- blob
+- GitHub 读取规则
+
+只问正常技术问题。
+
+## PASS
+
+如果新对话返回：
+
+- 当前新 challenge；
+- 当前新 blob 前 8 位；
+- `PL-STATE ✓ V1.5`
+
+则：
+
+`COLD-START LOAD AUDIT = PASS`
+
+因为它拿到了刚刚更新、没有在测试对话中提供的新状态身份。
 
 ## FAIL
 
-如果 GitHub 读取结果中没有可用的 `Citation Marker`：
+返回旧 challenge、旧 blob、缺失状态戳，或 GitHub 读取失败：
 
-`PL-LOAD FAIL: NO_CURRENT_TURN_CITATION_MARKER`
+`COLD-START LOAD AUDIT = FAIL`
 
-不得输出成功标记。
+---
 
-## Gate A PASS
+# 为什么 V1.5 删除 STATE_SOURCE
 
-必须同时满足：
+V1.4.x 连续测试证明：
 
-1. STATE_SOURCE 使用本回合 GitHub 返回的 exact Citation Marker
-2. CHALLENGE 正确
-3. STATE_BLOB 正确
-4. 最后一行才出现 `PL-LOAD ✓ V1.4.3`
+- GitHub 返回内部 Citation Marker；
+- 但用户当前 ChatGPT UI 不稳定展示 file citation；
+- 即使 assistant 内部有 file citation，截图中 `STATE_SOURCE` 仍为空；
+- 因此把 UI citation 当作 Gate A 必要条件，会产生假失败。
+
+所以 V1.5 删除：
+
+- STATE_SOURCE
+- Citation Marker Copy
+- Citation Render Preflight
+- “没有 citation 就 PL-LOAD FAIL”的规则
+
+不再修这一层。
 
 ---
 
 ## GATE B — TEACHING / OUTPUT
 
-Gate A 通过后：
+Gate A 的状态读取完成后：
 
 1. TASK ANSWER FIRST
 2. 用户点名但不会的词可作为 OPAQUE LABEL
@@ -91,8 +123,6 @@ Gate A 通过后：
 4. 其他不必要技术支线 DEFER
 5. OUTPUT LINT 失败则重写
 6. 一个完整认知台阶，不一次跨多个未知技术体系
-
-Gate B 在 V1.4.3 不修改。
 
 ---
 
@@ -142,16 +172,9 @@ Gate B 在 V1.4.3 不修改。
 
 # 当前系统重点
 
-V1.4.2 冷启动中：
+V1.5 当前优先级：
 
-- CHALLENGE 正确
-- STATE_BLOB 正确
-- STATE_SOURCE 为空
-
-因此当前判断：
-
-> fresh GitHub load 很可能已经工作；失败点是 citation proof 输出。
-
-V1.4.3 只修：
-
-> 不再要求模型预测 UI 渲染，而是复制工具返回的 exact Citation Marker。
+1. 正常技术回合继续 fresh-read GitHub；
+2. 不再尝试用不稳定 UI citation 证明每次工具调用；
+3. 用 challenge + blob 的轮换测试审计 cold-start freshness；
+4. Gate A 稳定后重新处理 Gate B 教学质量。

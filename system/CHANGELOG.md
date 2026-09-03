@@ -1,38 +1,70 @@
 # Pop Learning OS Changelog
 
-# V1.4.3 — 2026-09-03
+# V1.5 — 2026-09-03
 
-## SYSTEM BUG 007 — Citation render preflight asks the model to verify the future UI
+## SYSTEM BUG 008 — Citation proof depends on UI behavior outside prompt control
 
-V1.4.2 test returned correct challenge and blob but blank STATE_SOURCE.
+V1.4.3 still showed:
 
-The flaw was architectural:
+`STATE_SOURCE =`
 
-> the model cannot inspect the post-send UI before sending.
+blank in the user's actual ChatGPT UI.
 
-## SYSTEM CHANGE 023 — Citation Marker Copy
+This occurred even when:
 
-Instead of “confirm it rendered”, V1.4.3 requires:
+- challenge matched the latest GitHub state;
+- blob matched the latest GitHub state;
+- the assistant-side GitHub result contained a Citation Marker.
 
-> copy the exact `Citation Marker` returned by the current-turn GitHub tool result.
+## Root cause
 
-## SYSTEM CHANGE 024 — Source First, Pass Last
+The system tried to make a UI-rendered file citation a required proof of LOAD.
 
-Receipt order changed to:
+That proof channel is not stable in the user's current UI.
 
-1. STATE_SOURCE
-2. CHALLENGE
-3. STATE_BLOB
-4. PL-LOAD ✓
+Prompt changes cannot reliably force that UI behavior.
 
-The success declaration is last.
+## SYSTEM CHANGE 026 — Remove STATE_SOURCE
 
-## SYSTEM CHANGE 025 — Challenge Rotation
+V1.5 removes:
 
-CURRENT_STATE changed, challenge rotated to:
+- STATE_SOURCE
+- Citation Marker Copy
+- Citation Render Preflight
+- citation-based PL-LOAD success/failure
 
-`PL143-3E871B2B`
+## SYSTEM CHANGE 027 — PL-STATE
 
-# V1.4.2
+Normal technical turns now output:
 
-Attempted citation render preflight; real test showed the preflight itself was not executable before UI rendering.
+`PL-STATE ✓ V1.5 | CHALLENGE=<...> | BLOB=<...>`
+
+Meaning:
+
+> this is the learner-state identity used by the answer.
+
+It is not misrepresented as a cryptographic or UI-level proof of a current-turn tool call.
+
+## SYSTEM CHANGE 028 — Cold-Start Audit
+
+Actual BOOT/LOAD verification moves to a challenge-rotation test:
+
+1. rotate challenge;
+2. push;
+3. keep new value out of the test conversation;
+4. open a new conversation;
+5. verify new challenge + new blob.
+
+## SYSTEM CHANGE 029 — Stale State Is the Real Failure
+
+The important failure is:
+
+> GitHub state changed, but the new conversation still uses the old state.
+
+If the state has not changed, repeated reads of identical content are not materially distinguishable for learner-state correctness.
+
+# V1.4.3
+
+Attempted Citation Marker Copy.
+
+Real UI testing showed the citation proof layer remained unavailable to the user.
