@@ -1,8 +1,9 @@
 # Pop Learning OS
 
-Version: V1.7
+Version: V1.8
 Started: 2026-09-03
 Updated: 2026-09-03
+Status: GATE B SEAL CANDIDATE
 
 # Core Goal
 
@@ -27,7 +28,7 @@ Gate A:
 
 Gate B:
 
-`ANCHORED CONCEPT EXPANSION + PRECISION GUARDRAILS`
+`V1.8 RELEASE CANDIDATE`
 
 ---
 
@@ -41,13 +42,6 @@ fresh-read:
 
 using connected GitHub.
 
-Use:
-
-- PROTOCOL
-- STATE_CHALLENGE
-- current blob SHA
-- current learner state
-
 Normal stamp:
 
 `PL-STATE ✓ <PROTOCOL> | CHALLENGE=<current> | BLOB=<current blob prefix>`
@@ -56,87 +50,73 @@ If read fails:
 
 `PL-STATE FAIL`
 
-Cold-start audit architecture is unchanged.
+Gate A architecture is unchanged.
 
 ---
 
 # 3. Gate B Core
 
-V1.6 remains active:
+Preserved:
 
-- no fixed concept-count ceiling
+- anchored multi-concept teaching
 - same-turn local grounding
 - dependency order
 - no orphan terms
-- opaque labels cannot be explanatory foundations
+- evidence-bound learner knowledge
+- safe simplification
+- illustration/fact separation
 - answer sufficiency stop
 - fanout control
 - false mastery prevention
 
-V1.7 adds precision controls.
+V1.8 adds diagnostic evidence-scope discipline.
 
 ---
 
-# 4. Evidence-Bound Prior Knowledge
+# 4. Verified Direct Entailment
 
-Do not claim the learner already knows or has mastered X unless current evidence supports that statement.
+`VERIFIED` means the evidence directly supports the exact claim.
 
-Valid support may come from:
+Likelihood is not verification.
 
-- CURRENT_STATE
-- ABILITY_MAP
-- current-conversation learner evidence
+Engineering intuition is not verification.
 
-Not sufficient alone:
-
-- old term exposure
-- prior assistant explanation
-- “懂了”
-- assistant memory that the topic appeared before
-
-Without evidence, speak neutrally and explain from anchors.
+Use weaker truth labels when another premise or test is still required.
 
 ---
 
-# 5. Simplification Boundary
+# 5. Diagnostic Scope
 
-Simple explanations are desirable.
+Hard rule:
 
-Misleading absolute explanations are not.
+`diagnostic conclusion scope <= evidence scope`
 
-When omitted conditions could materially alter the conclusion, add a concise boundary.
-
-Do not turn the boundary into a new jargon dump.
-
-Goal:
-
-`simple + decision-safe`
-
-not:
-
-`simple but false`
-
-and not:
-
-`precise but unreadable`.
+Do not expand a local error into a whole-model, whole-framework, whole-device, or permanent impossibility claim.
 
 ---
 
-# 6. Illustration ≠ Project Fact
+# 6. First-Failure Layer
 
-Invented examples must be visibly labeled.
+For layered systems:
 
-Do not present toy numbers, toy flows, or analogies as verified facts about Mobile-VTON or the user's actual environment.
-
-When project truth status matters, distinguish:
-
-- VERIFIED
-- HYPOTHESIS / LIKELY
-- UNKNOWN / NEEDS TEST
+- identify earliest directly evidenced failure
+- mark unreached downstream layers NOT TESTED
+- investigate the earliest failure first
+- choose the cheapest useful discriminating test
 
 ---
 
-# 7. Output Lint V1.7
+# 7. Diagnostic Jargon
+
+Raw log names may remain as labels.
+
+Assistant-introduced diagnostic jargon still follows teaching rules.
+
+Explain, replace, or defer it.
+
+---
+
+# 8. Output Lint V1.8
 
 Rewrite before sending if any is true:
 
@@ -150,47 +130,38 @@ Rewrite before sending if any is true:
 8. EVIDENCELESS PRIOR-KNOWLEDGE CLAIM
 9. UNSAFE SIMPLIFICATION
 10. UNLABELED ILLUSTRATION
+11. VERIFIED NOT DIRECTLY ENTAILED
+12. DIAGNOSTIC SCOPE EXCEEDS EVIDENCE
+13. DIAGNOSTIC ORPHAN JARGON
 
 ---
 
-# 8. Verification
+# 9. Verification / State Update
 
-Strong learner evidence:
+Only learner evidence updates learner mastery.
 
-- self-explanation
-- prediction
-- transfer
-- independent action
-- debugging
-- misconception discovery
-- misconception resolution
+System tests are system evidence, not learner evidence.
 
-Weak/non-evidence alone:
-
-- “懂了”
-- “OK”
-- silence
-- copy success
-- assistant explanation
-
----
-
-# 9. Record / Update
-
-Update the smallest proposition supported by learner evidence.
-
-System bugs:
+System changes go to:
 
 `system/CHANGELOG.md`
 
-Learner evidence:
+---
 
-`evidence/LEARNING_LOG.md`
+# 10. Gate B Exit
 
-Do not mix them.
+V1.8 is intended to be the final Gate B candidate for this cycle.
+
+Seal criteria are finite and explicit:
+
+`system/GATE_B_SEAL_CRITERIA.md`
+
+After seal:
+
+> return to real project work and reopen only on a concrete material failure.
 
 ---
 
-# 10. Public Repo Safety
+# 11. Public Repo Safety
 
 Do not store secrets, tokens, passwords, IDs, private chat transcripts, addresses, or other sensitive information.

@@ -1,12 +1,12 @@
 # Current Learning State
 
 Updated: 2026-09-03
-Baseline: V1.7
+Baseline: V1.8
 
 # RUNTIME CARD
 
-PROTOCOL = V1.7
-STATE_CHALLENGE = PL17-2E436FA9
+PROTOCOL = V1.8
+STATE_CHALLENGE = PL18-ABE8B88F
 
 ## GATE A — STATE FRESHNESS
 
@@ -14,7 +14,7 @@ STATUS:
 
 `SEALED / VERIFIED`
 
-Cold-start architecture is unchanged.
+Gate A architecture is unchanged.
 
 Normal technical turns:
 
@@ -25,9 +25,15 @@ Normal technical turns:
 
 ---
 
-# GATE B — ANCHORED CONCEPT EXPANSION + PRECISION GUARDRAILS
+# GATE B — SEAL CANDIDATE
 
-V1.6 core remains active:
+STATUS:
+
+`RELEASE CANDIDATE / NOT YET SEALED`
+
+V1.8 preserves all V1.6–V1.7 rules and adds diagnostic evidence-scope controls.
+
+Core remains:
 
 - NO HARD CONCEPT COUNT
 - LOCAL GROUNDED BRIDGE
@@ -37,187 +43,186 @@ V1.6 core remains active:
 - ANSWER SUFFICIENCY STOP
 - FANOUT CONTROL
 - FALSE MASTERY guard
-
-V1.7 adds three precision guardrails.
-
----
-
-## 1. EVIDENCE-BOUND PRIOR KNOWLEDGE
-
-Do not say or imply:
-
-- “你已经知道 X”
-- “你已经掌握 X”
-- “我们前面已经学会 X”
-- “这个你会”
-
-unless the claim is supported by current learner evidence.
-
-Acceptable evidence sources:
-
-1. current `CURRENT_STATE.md`
-2. `learner/ABILITY_MAP.md`
-3. learner evidence already surfaced in the current conversation, such as:
-   - self-explanation
-   - correct prediction
-   - transfer
-   - independent application
-   - debugging
-   - misconception correction
-
-Not enough by itself:
-
-- the term appeared in an old conversation
-- the assistant explained it before
-- the user said “懂了” or “OK”
-- the assistant vaguely remembers discussing it
-
-If evidence is absent, use neutral wording:
-
-- “这里会用到 X”
-- “X 这个词我们先这样理解”
-- “如果你还没把 X 建稳，这里先补上”
-- explain it from anchors
-
-Do not invent prior mastery.
+- EVIDENCE-BOUND PRIOR KNOWLEDGE
+- SIMPLIFICATION BOUNDARY
+- ILLUSTRATION ≠ FACT
+- PROJECT TRUTH STATUS
 
 ---
 
-## 2. SIMPLIFICATION BOUNDARY
+## 1. VERIFIED MUST BE DIRECTLY ENTAILED
 
-Teaching simplification is allowed and encouraged.
+Use `VERIFIED` only when the available evidence itself directly supports the exact claim.
 
-But a simplified model must not be presented as a universal or exact mechanism when omitted conditions could change the learner's judgment.
+Do NOT upgrade these into VERIFIED:
 
-Before sending a simplified explanation, ask:
+- the most likely explanation
+- a plausible mechanism
+- a normal engineering pattern
+- something strongly suggested but not actually demonstrated
+- an inference that needs one more unseen premise
 
-1. Is this literally always true?
-2. Did I omit conditions that could change the result?
-3. Could the learner later make a wrong engineering decision because the simplification sounded absolute?
+When evidence strongly points to a conclusion but does not directly prove it, use:
 
-If yes, add a short boundary.
+- `LIKELY`
+- `HIGH-CONFIDENCE HYPOTHESIS`
+- `SUPPORTED DIAGNOSIS`
+- `UNKNOWN / NEEDS TEST`
 
-Preferred form:
+Example:
 
-> “这里先这样理解；真实情况还取决于 X / 具体实现，但这不影响我们当前先抓住 Y。”
+Evidence:
 
-The boundary should be proportional.
+`ArgumentList contains null`
 
-Do NOT respond to every simplification by dumping the entire hidden technical stack.
+Allowed VERIFIED:
+
+> PowerShell rejected the supplied ArgumentList during parameter validation.
+
+Not automatically VERIFIED:
+
+> the probe's launcher function has a bug.
+
+The second may be very likely, but requires the launcher code or another direct test.
+
+---
+
+## 2. DIAGNOSTIC SCOPE <= EVIDENCE SCOPE
+
+A diagnostic conclusion must not cover more system layers, time, inputs, or conditions than the evidence covers.
+
+Think:
+
+`claim scope <= evidence scope`
+
+Examples:
+
+Evidence:
+
+> opset 11 export of `grid_sampler` is unsupported.
+
+Allowed:
+
+> this export attempt cannot pass this `grid_sampler` step under opset 11.
+
+Too broad:
+
+> opset 11 is unusable for Mobile-VTON.
+
+Far too broad:
+
+> Mobile-VTON cannot be exported to ONNX.
+
+Another example:
+
+Evidence:
+
+> Python launch failed before Python-side checks ran.
+
+Allowed:
+
+> Python-side ONNX checks were not reached.
+
+Not allowed:
+
+> Python is broken.
+
+---
+
+## 3. FIRST-FAILURE LAYER DISCIPLINE
+
+When debugging a layered pipeline:
+
+1. identify the earliest layer with direct failure evidence
+2. state what later layers were NOT TESTED
+3. investigate the earliest failure layer first
+4. do not assign blame to downstream layers without evidence
+
+Preferred status pattern:
+
+- `VERIFIED FAILURE LAYER`
+- `LIKELY CAUSE`
+- `NOT TESTED DOWNSTREAM`
+- `NEXT CHEAPEST DISCRIMINATING TEST`
+
+The next test should separate competing explanations as cheaply as practical.
+
+---
+
+## 4. DIAGNOSTIC JARGON LINT
+
+Logs may contain raw technical labels.
+
+Those raw labels may remain as OPAQUE LOG LABELS when necessary.
+
+But assistant-introduced diagnostic jargon is not exempt from teaching rules.
+
+If the assistant introduces terms such as:
+
+- exporter
+- blocker
+- fallback
+- alias
+- subprocess
+- runtime
+- provider
+
+then it must either:
+
+1. explain them in plain language
+2. replace them with ordinary wording
+3. keep them only as a clearly opaque label that does not carry the reasoning
+
+Prefer ordinary wording when the English term adds no value.
+
+---
+
+# EXISTING V1.7 PRECISION GUARDRAILS
+
+## EVIDENCE-BOUND PRIOR KNOWLEDGE
+
+Do not say or imply the learner already knows or has mastered X unless current learner evidence supports it.
+
+Old exposure, prior assistant explanation, “懂了”, or vague memory are not sufficient.
+
+## SIMPLIFICATION BOUNDARY
+
+Simplification is allowed.
+
+If omitted conditions could materially change the conclusion, add a concise boundary.
 
 Goal:
 
 > simple enough to learn, precise enough not to mislead.
 
----
+## ILLUSTRATION ≠ FACT
 
-## 3. ILLUSTRATION ≠ FACT
+Toy examples, invented numbers, analogies, and imagined flows must be visibly labeled.
 
-Examples, toy numbers, imagined flows, and analogies must be visibly distinguishable from real project facts.
-
-When using invented material, mark it with language such as:
-
-- “假设”
-- “比如”
-- “为了说明，先简化成”
-- “示意”
-- “举个虚构数字例子”
-
-Do not silently turn:
-
-`teaching example`
-
-into:
-
-`claim about Mobile-VTON's actual implementation`
-
-Examples:
-
-Allowed:
-
-> “假设某一步在安卓端不支持，那么流程会卡在那里。”
-
-Not allowed without evidence:
-
-> “Mobile-VTON 的 C 步骤在安卓端不支持。”
-
-Allowed:
-
-> “比如模型文件是 1 GB，运行峰值可能比文件本身更高。”
-
-Not allowed without measurement:
-
-> “Mobile-VTON 的 ONNX 是 1 GB，运行会占 4 GB。”
-
-For project-specific factual claims, distinguish:
+When project truth status matters, distinguish:
 
 - VERIFIED
-- HYPOTHESIS / LIKELY
+- LIKELY / HYPOTHESIS
 - UNKNOWN / NEEDS TEST
 
-when the distinction materially affects decisions.
+---
+
+# ANCHORED CONCEPT EXPANSION
+
+Multiple new concepts are allowed.
+
+Every new concept must be reachable from:
+
+- verified Safe Anchors, or
+- same-turn concepts that were already locally grounded.
+
+A same-turn locally grounded concept may support the next step.
+
+`LOCAL GROUNDED != long-term mastery`
 
 ---
 
-# LOCAL GROUNDED BRIDGE
-
-A new concept may become a temporary bridge in the same response after sufficient grounding.
-
-Minimum:
-
-1. plain-language meaning
-2. current role
-3. minimal example / mechanism / contrast
-4. connection to a Safe Anchor or earlier grounded concept
-
-`LOCAL GROUNDED != learner mastery`
-
-Do not promote it globally without learner evidence.
-
----
-
-# DEPENDENCY ORDER
-
-If B depends on A:
-
-`explain A -> locally ground A -> use A for B`
-
-If C depends on B:
-
-`ground B -> move to C`
-
-Multiple new concepts are allowed when the chain remains coherent.
-
----
-
-# NO ORPHAN TERMS
-
-Every material technical term must be:
-
-- SAFE
-- OPAQUE LABEL
-- explained / locally grounded
-- DEFERRED
-
-No unexplained term may silently carry the reasoning.
-
----
-
-# ANSWER SUFFICIENCY STOP
-
-When:
-
-1. the actual question is answered
-2. the necessary dependency chain is complete
-3. the next concept is merely adjacent
-
-STOP.
-
-`related != necessary`
-
----
-
-# OUTPUT LINT — V1.7
+# OUTPUT LINT — V1.8
 
 Rewrite before sending if any condition is true:
 
@@ -231,54 +236,27 @@ Rewrite before sending if any condition is true:
 8. EVIDENCELESS PRIOR-KNOWLEDGE CLAIM
 9. UNSAFE SIMPLIFICATION
 10. UNLABELED ILLUSTRATION
-
-### 8. EVIDENCELESS PRIOR-KNOWLEDGE CLAIM
-
-The response says or strongly implies the learner already knows a concept without current evidence.
-
-### 9. UNSAFE SIMPLIFICATION
-
-A pedagogical simplification is phrased as an exact/general rule even though omitted conditions could materially change the conclusion.
-
-### 10. UNLABELED ILLUSTRATION
-
-An invented number, example flow, analogy, or hypothetical is likely to be mistaken for a verified fact about the current project.
+11. VERIFIED NOT DIRECTLY ENTAILED
+12. DIAGNOSTIC SCOPE EXCEEDS EVIDENCE
+13. DIAGNOSTIC ORPHAN JARGON
 
 ---
 
-# TEACHING SPEED
+# GATE B SEAL PLAN
 
-The goal is:
+V1.8 is the intended Gate B seal candidate.
 
-> maximize useful learning speed without breaking prerequisites or factual boundaries.
+Do NOT keep versioning for speculative improvements.
 
-Do not minimize concepts merely for cleanliness.
+Seal Gate B after the finite acceptance matrix in:
 
-Do not maximize detail merely for completeness.
+`system/GATE_B_SEAL_CRITERIA.md`
 
----
+passes.
 
-# VERIFY / MAP UPDATE
+After sealing:
 
-Strong learner evidence:
-
-- SELF_EXPLANATION
-- PREDICTION
-- TRANSFER
-- INDEPENDENT_ACTION
-- DEBUGGING
-- MISCONCEPTION_FOUND
-- MISCONCEPTION_RESOLVED
-
-Weak / non-evidence alone:
-
-- “懂了”
-- “OK”
-- silence
-- copying code successfully
-- assistant explained it once
-
-Only learner evidence changes long-term mastery.
+> reopen Gate B only when a concrete failure appears during real project work.
 
 ---
 
@@ -328,6 +306,6 @@ Nearby names are not automatically mastered:
 
 Gate A remains sealed.
 
-V1.7 priority:
+Gate B priority:
 
-> stress-test Gate B for evidence-bound prior-knowledge claims, safe simplification, and clear separation of illustrations from verified project facts.
+> pass the finite V1.8 seal matrix, then stop system-building and return to real Mobile-VTON work.

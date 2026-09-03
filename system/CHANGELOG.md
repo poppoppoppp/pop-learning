@@ -1,5 +1,131 @@
 # Pop Learning OS Changelog
 
+# V1.8 — 2026-09-03
+
+## SYSTEM BUG 012 — VERIFIED label can exceed direct evidence
+
+### Observation
+
+Two different debugging stress tests repeated the same pattern:
+
+- PowerShell `ArgumentList` failure was correctly localized, but the VERIFIED wording expanded from the observed parameter-validation failure to the inferred launcher bug.
+- ONNX opset/grid_sampler failure was correctly diagnosed, but VERIFIED wording expanded from one exact unsupported operation/version pair to broader claims such as “opset 11 is too old.”
+
+### Root cause
+
+V1.7 required truth-status labels, but did not define how narrow a VERIFIED claim must be.
+
+### Fix
+
+Add:
+
+`VERIFIED MUST BE DIRECTLY ENTAILED`
+
+---
+
+## SYSTEM BUG 013 — Diagnostic conclusion scope can outrun evidence scope
+
+### Observation
+
+A local failure can still be phrased as a broader model/framework diagnosis even when the main causal direction is correct.
+
+### Fix
+
+Add:
+
+`DIAGNOSTIC SCOPE <= EVIDENCE SCOPE`
+
+---
+
+## SYSTEM BUG 014 — Debugging language can reintroduce orphan jargon
+
+### Observation
+
+Diagnostic answers may introduce assistant-created terms such as:
+
+- blocker
+- exporter
+- alias
+- subprocess
+- fallback
+
+without explanation.
+
+### Fix
+
+Add:
+
+`DIAGNOSTIC JARGON LINT`
+
+Raw log labels may remain opaque when necessary, but assistant-created diagnostic vocabulary is not exempt from teaching rules.
+
+---
+
+## SYSTEM CHANGE 043 — Verified Direct Entailment
+
+`VERIFIED` now requires that the evidence directly supports the exact claim.
+
+Likelihood, intuition, and normal engineering patterns require weaker labels unless independently demonstrated.
+
+---
+
+## SYSTEM CHANGE 044 — Diagnostic Scope Rule
+
+Hard rule:
+
+`diagnostic claim scope <= evidence scope`
+
+A local failure cannot be promoted into a whole-model, whole-framework, whole-device, or permanent impossibility claim.
+
+---
+
+## SYSTEM CHANGE 045 — First-Failure Layer Discipline
+
+Debugging answers must:
+
+1. identify the earliest directly evidenced failure layer
+2. mark unreached downstream layers NOT TESTED
+3. investigate the first failure first
+4. prefer the cheapest useful discriminating test
+
+---
+
+## SYSTEM CHANGE 046 — Diagnostic Jargon Lint
+
+Assistant-introduced debugging jargon must be explained, replaced with plain language, or deferred.
+
+---
+
+## SYSTEM CHANGE 047 — Output Lint V1.8
+
+Add:
+
+11. VERIFIED NOT DIRECTLY ENTAILED
+12. DIAGNOSTIC SCOPE EXCEEDS EVIDENCE
+13. DIAGNOSTIC ORPHAN JARGON
+
+The V1.7 ten checks remain active.
+
+---
+
+## SYSTEM CHANGE 048 — Finite Gate B Seal Criteria
+
+Added:
+
+`system/GATE_B_SEAL_CRITERIA.md`
+
+V1.8 is the intended Gate B seal candidate.
+
+Gate B seals after a finite five-test matrix:
+
+- 2 known-failure regressions
+- 2 unseen blind tests
+- 1 genuine Mobile-VTON project turn
+
+After sealing, reopen only for a concrete material failure observed in real work.
+
+---
+
 # V1.7 — 2026-09-03
 
 ## SYSTEM BUG 010 — Prior-knowledge claims can outrun learner evidence
@@ -309,4 +435,3 @@ If the state has not changed, repeated reads of identical content are not materi
 Attempted Citation Marker Copy.
 
 Real UI testing showed the citation proof layer remained unavailable to the user.
-

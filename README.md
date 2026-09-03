@@ -2,44 +2,64 @@
 
 Current Version:
 
-`V1.7`
+`V1.8`
 
 Current STATE_CHALLENGE:
 
-`PL17-2E436FA9`
+`PL18-ABE8B88F`
 
 # Gate A
 
 `SEALED / VERIFIED`
 
-No architecture change in V1.7.
-
 # Gate B
 
-Core remains:
+`RELEASE CANDIDATE / NOT YET SEALED`
 
-`ANCHORED CONCEPT EXPANSION`
+V1.8 preserves Anchored Concept Expansion and V1.7 precision guardrails.
 
-V1.7 adds:
+New diagnostic controls:
 
-- EVIDENCE-BOUND PRIOR KNOWLEDGE
-- SIMPLIFICATION BOUNDARY
-- ILLUSTRATION ≠ FACT
-- PROJECT TRUTH STATUS when materially relevant
+- VERIFIED MUST BE DIRECTLY ENTAILED
+- DIAGNOSTIC SCOPE <= EVIDENCE SCOPE
+- FIRST-FAILURE LAYER DISCIPLINE
+- DIAGNOSTIC JARGON LINT
 
-Output lint now checks 10 failure modes.
+Output lint now has 13 failure modes.
 
-Detailed Gate B:
+# Finite Exit
 
-`system/TEACHING_GATE.md`
+Gate B is no longer open-ended.
+
+Seal criteria:
+
+`system/GATE_B_SEAL_CRITERIA.md`
+
+Required final matrix:
+
+- R1 PowerShell launcher regression
+- R2 ONNX opset/grid_sampler regression
+- B1 unseen concept/architecture test
+- B2 unseen diagnostic/decision test
+- one real Mobile-VTON project turn
+
+If all five pass:
+
+`GATE B = SEALED`
+
+Then return to normal project work.
+
+# Reopen
+
+After sealing, reopen only for a concrete material failure observed in real work.
+
+Do not reopen for speculative improvement.
 
 # Custom Instructions
 
-No replacement is required for V1.7.
+No replacement required for V1.8.
 
-The existing version-agnostic Boot Pointer already loads current Gate B rules from GitHub.
-
-# Files Changed in V1.7
+# Files Changed in V1.8
 
 - `SYSTEM.md`
 - `README.md`
@@ -47,6 +67,7 @@ The existing version-agnostic Boot Pointer already loads current Gate B rules fr
 - `system/BOOT_GATE.md`
 - `system/TEACHING_GATE.md`
 - `system/CHANGELOG.md`
+- `system/GATE_B_SEAL_CRITERIA.md`
 
 Not changed:
 
