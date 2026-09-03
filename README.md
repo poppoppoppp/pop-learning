@@ -17,11 +17,21 @@
 - `learner/ABILITY_MAP.md`
 - `evidence/LEARNING_LOG.md`
 - `concepts/DEPENDENCIES.md`
+- `system/CHANGELOG.md`
 
-Version:
+Current Version:
 
-`V1.0`
+`V1.1`
 
 Started:
 
 `2026-09-03`
+
+V1.1 核心变化：
+
+- 新增输出前 `SCAN OUTPUT`
+- 新增 SAFE / TEACH-NOW / DEFER 门禁
+- 新增单层教学规则
+- 能力更新优先使用最小已验证命题
+- 新增类比退出机制
+- 系统 Bug 与用户学习证据分离
