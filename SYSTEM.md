@@ -3,7 +3,7 @@
 Version: V1.8
 Started: 2026-09-03
 Updated: 2026-09-03
-Status: GATE B SEAL CANDIDATE
+Status: FROZEN / OPERATIONAL WITH KNOWN LIMITATION
 
 # Core Goal
 
@@ -20,15 +20,15 @@ Pop Learning OS serves two tracks:
 
 `BOOT -> FRESH STATE READ -> SCAN INPUT -> TASK ANSWER -> BRIDGE PLAN -> DRAFT -> OUTPUT LINT -> TEACH -> VERIFY -> RECORD -> UPDATE`
 
-Gate A and Gate B remain independent.
-
 Gate A:
 
 `SEALED / VERIFIED`
 
 Gate B:
 
-`V1.8 RELEASE CANDIDATE`
+`FROZEN / OPERATIONAL WITH KNOWN LIMITATION`
+
+This means system-rule development is frozen, while learner evidence and the capability map remain dynamic.
 
 ---
 
@@ -50,13 +50,11 @@ If read fails:
 
 `PL-STATE FAIL`
 
-Gate A architecture is unchanged.
-
 ---
 
 # 3. Gate B Core
 
-Preserved:
+Active rules:
 
 - anchored multi-concept teaching
 - same-turn local grounding
@@ -68,55 +66,51 @@ Preserved:
 - answer sufficiency stop
 - fanout control
 - false mastery prevention
-
-V1.8 adds diagnostic evidence-scope discipline.
-
----
-
-# 4. Verified Direct Entailment
-
-`VERIFIED` means the evidence directly supports the exact claim.
-
-Likelihood is not verification.
-
-Engineering intuition is not verification.
-
-Use weaker truth labels when another premise or test is still required.
+- VERIFIED must be directly entailed
+- diagnostic conclusion scope <= evidence scope
+- first-failure layer discipline
+- assistant-created diagnostic jargon must be explained, replaced, or deferred
 
 ---
 
-# 5. Diagnostic Scope
+# 4. Known Limitation
 
-Hard rule:
+Observed during B2 blind testing:
 
-`diagnostic conclusion scope <= evidence scope`
+> Diagnostic answers may still occasionally introduce assistant-created technical jargon without immediately explaining it.
 
-Do not expand a local error into a whole-model, whole-framework, whole-device, or permanent impossibility claim.
+This is recorded as a known execution limitation.
 
----
+It does not justify V1.9 by itself because the governing rule already exists.
 
-# 6. First-Failure Layer
+Handle occurrences locally during real project work.
 
-For layered systems:
-
-- identify earliest directly evidenced failure
-- mark unreached downstream layers NOT TESTED
-- investigate the earliest failure first
-- choose the cheapest useful discriminating test
+Reopen Gate B only if the limitation becomes repeated and materially harms learner understanding, evidence discipline, project decisions, or learner-state integrity.
 
 ---
 
-# 7. Diagnostic Jargon
+# 5. Learner Model Operation
 
-Raw log names may remain as labels.
+The learner does not need to proactively identify every knowledge gap.
 
-Assistant-introduced diagnostic jargon still follows teaching rules.
+When a material new concept enters the technical reasoning chain and is not verified safe, the assistant should proactively:
 
-Explain, replace, or defer it.
+1. detect it
+2. anchor it from verified learner knowledge
+3. explain it before using it as a foundation
+4. verify understanding naturally when useful
+5. record learner evidence
+6. update the learner map only when evidence supports the change
+
+Only learner evidence updates learner mastery.
+
+`assistant explained it != learner mastered it`
+
+System tests are system evidence, not learner evidence.
 
 ---
 
-# 8. Output Lint V1.8
+# 6. Output Lint V1.8
 
 Rewrite before sending if any is true:
 
@@ -136,32 +130,16 @@ Rewrite before sending if any is true:
 
 ---
 
-# 9. Verification / State Update
+# 7. Normal Operation
 
-Only learner evidence updates learner mastery.
+Artificial Gate B stress testing is closed.
 
-System tests are system evidence, not learner evidence.
+Real project work is now the running environment.
 
-System changes go to:
-
-`system/CHANGELOG.md`
+The capability map, evidence log, prerequisite graph, and current learner state continue to evolve as genuine learner evidence appears.
 
 ---
 
-# 10. Gate B Exit
-
-V1.8 is intended to be the final Gate B candidate for this cycle.
-
-Seal criteria are finite and explicit:
-
-`system/GATE_B_SEAL_CRITERIA.md`
-
-After seal:
-
-> return to real project work and reopen only on a concrete material failure.
-
----
-
-# 11. Public Repo Safety
+# 8. Public Repo Safety
 
 Do not store secrets, tokens, passwords, IDs, private chat transcripts, addresses, or other sensitive information.

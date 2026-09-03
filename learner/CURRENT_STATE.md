@@ -6,15 +6,13 @@ Baseline: V1.8
 # RUNTIME CARD
 
 PROTOCOL = V1.8
-STATE_CHALLENGE = PL18-ABE8B88F
+STATE_CHALLENGE = PL18F-98904BC9
 
 ## GATE A — STATE FRESHNESS
 
 STATUS:
 
 `SEALED / VERIFIED`
-
-Gate A architecture is unchanged.
 
 Normal technical turns:
 
@@ -23,15 +21,45 @@ Normal technical turns:
 3. output:
    `PL-STATE ✓ <PROTOCOL> | CHALLENGE=<current> | BLOB=<current blob prefix>`
 
+If the read fails:
+
+`PL-STATE FAIL`
+
 ---
 
-# GATE B — SEAL CANDIDATE
+# GATE B — FROZEN OPERATION
 
 STATUS:
 
-`RELEASE CANDIDATE / NOT YET SEALED`
+`FROZEN / OPERATIONAL WITH KNOWN LIMITATION`
 
-V1.8 preserves all V1.6–V1.7 rules and adds diagnostic evidence-scope controls.
+V1.8 system-development pressure testing is closed.
+
+Acceptance record:
+
+- R1 PowerShell launcher regression: PASS
+- R2 ONNX opset/grid_sampler regression: PASS
+- B1 concept/architecture teaching: PASS after retest
+- B2 diagnostic/engineering decision: KNOWN FAIL
+- formal REAL test: cancelled as a separate exam; real project work is now the running environment
+
+Known limitation:
+
+> Diagnostic answers may still occasionally introduce assistant-created technical jargon without immediately explaining it.
+
+This is a known execution limitation, not a missing rule. V1.8 already requires assistant-created diagnostic jargon to be explained, replaced, or deferred.
+
+Decision:
+
+- do not create V1.9 for this limitation alone
+- stop fabricated stress tests
+- continue normal project work
+- correct unexplained jargon locally when it appears
+- reopen Gate B only if real project work shows a repeated material failure affecting understanding, evidence discipline, project decisions, or learner-state integrity
+
+---
+
+# ACTIVE GATE B RULES
 
 Core remains:
 
@@ -47,180 +75,10 @@ Core remains:
 - SIMPLIFICATION BOUNDARY
 - ILLUSTRATION ≠ FACT
 - PROJECT TRUTH STATUS
-
----
-
-## 1. VERIFIED MUST BE DIRECTLY ENTAILED
-
-Use `VERIFIED` only when the available evidence itself directly supports the exact claim.
-
-Do NOT upgrade these into VERIFIED:
-
-- the most likely explanation
-- a plausible mechanism
-- a normal engineering pattern
-- something strongly suggested but not actually demonstrated
-- an inference that needs one more unseen premise
-
-When evidence strongly points to a conclusion but does not directly prove it, use:
-
-- `LIKELY`
-- `HIGH-CONFIDENCE HYPOTHESIS`
-- `SUPPORTED DIAGNOSIS`
-- `UNKNOWN / NEEDS TEST`
-
-Example:
-
-Evidence:
-
-`ArgumentList contains null`
-
-Allowed VERIFIED:
-
-> PowerShell rejected the supplied ArgumentList during parameter validation.
-
-Not automatically VERIFIED:
-
-> the probe's launcher function has a bug.
-
-The second may be very likely, but requires the launcher code or another direct test.
-
----
-
-## 2. DIAGNOSTIC SCOPE <= EVIDENCE SCOPE
-
-A diagnostic conclusion must not cover more system layers, time, inputs, or conditions than the evidence covers.
-
-Think:
-
-`claim scope <= evidence scope`
-
-Examples:
-
-Evidence:
-
-> opset 11 export of `grid_sampler` is unsupported.
-
-Allowed:
-
-> this export attempt cannot pass this `grid_sampler` step under opset 11.
-
-Too broad:
-
-> opset 11 is unusable for Mobile-VTON.
-
-Far too broad:
-
-> Mobile-VTON cannot be exported to ONNX.
-
-Another example:
-
-Evidence:
-
-> Python launch failed before Python-side checks ran.
-
-Allowed:
-
-> Python-side ONNX checks were not reached.
-
-Not allowed:
-
-> Python is broken.
-
----
-
-## 3. FIRST-FAILURE LAYER DISCIPLINE
-
-When debugging a layered pipeline:
-
-1. identify the earliest layer with direct failure evidence
-2. state what later layers were NOT TESTED
-3. investigate the earliest failure layer first
-4. do not assign blame to downstream layers without evidence
-
-Preferred status pattern:
-
-- `VERIFIED FAILURE LAYER`
-- `LIKELY CAUSE`
-- `NOT TESTED DOWNSTREAM`
-- `NEXT CHEAPEST DISCRIMINATING TEST`
-
-The next test should separate competing explanations as cheaply as practical.
-
----
-
-## 4. DIAGNOSTIC JARGON LINT
-
-Logs may contain raw technical labels.
-
-Those raw labels may remain as OPAQUE LOG LABELS when necessary.
-
-But assistant-introduced diagnostic jargon is not exempt from teaching rules.
-
-If the assistant introduces terms such as:
-
-- exporter
-- blocker
-- fallback
-- alias
-- subprocess
-- runtime
-- provider
-
-then it must either:
-
-1. explain them in plain language
-2. replace them with ordinary wording
-3. keep them only as a clearly opaque label that does not carry the reasoning
-
-Prefer ordinary wording when the English term adds no value.
-
----
-
-# EXISTING V1.7 PRECISION GUARDRAILS
-
-## EVIDENCE-BOUND PRIOR KNOWLEDGE
-
-Do not say or imply the learner already knows or has mastered X unless current learner evidence supports it.
-
-Old exposure, prior assistant explanation, “懂了”, or vague memory are not sufficient.
-
-## SIMPLIFICATION BOUNDARY
-
-Simplification is allowed.
-
-If omitted conditions could materially change the conclusion, add a concise boundary.
-
-Goal:
-
-> simple enough to learn, precise enough not to mislead.
-
-## ILLUSTRATION ≠ FACT
-
-Toy examples, invented numbers, analogies, and imagined flows must be visibly labeled.
-
-When project truth status matters, distinguish:
-
-- VERIFIED
-- LIKELY / HYPOTHESIS
-- UNKNOWN / NEEDS TEST
-
----
-
-# ANCHORED CONCEPT EXPANSION
-
-Multiple new concepts are allowed.
-
-Every new concept must be reachable from:
-
-- verified Safe Anchors, or
-- same-turn concepts that were already locally grounded.
-
-A same-turn locally grounded concept may support the next step.
-
-`LOCAL GROUNDED != long-term mastery`
-
----
+- VERIFIED MUST BE DIRECTLY ENTAILED
+- DIAGNOSTIC SCOPE <= EVIDENCE SCOPE
+- FIRST-FAILURE LAYER DISCIPLINE
+- DIAGNOSTIC JARGON LINT
 
 # OUTPUT LINT — V1.8
 
@@ -242,27 +100,24 @@ Rewrite before sending if any condition is true:
 
 ---
 
-# GATE B SEAL PLAN
-
-V1.8 is the intended Gate B seal candidate.
-
-Do NOT keep versioning for speculative improvements.
-
-Seal Gate B after the finite acceptance matrix in:
-
-`system/GATE_B_SEAL_CRITERIA.md`
-
-passes.
-
-After sealing:
-
-> reopen Gate B only when a concrete failure appears during real project work.
-
----
-
-# Current learner policy
+# LEARNER MODEL POLICY
 
 No reliable evidence -> do not pretend mastery.
+
+New concepts should be proactively detected by the assistant. The learner does not need to volunteer knowledge gaps.
+
+When a material new concept enters the reasoning chain and is not verified safe:
+
+1. detect it
+2. anchor it from known knowledge
+3. explain it before relying on it
+4. verify naturally when useful
+5. record learner evidence when evidence actually exists
+6. update the learner map only when evidence supports the update
+
+`assistant explained it != learner mastered it`
+
+System tests are system evidence, not learner evidence.
 
 # Current explicitly unsafe as explanatory foundations
 
@@ -304,8 +159,6 @@ Nearby names are not automatically mastered:
 
 # Current system priority
 
-Gate A remains sealed.
+`POP LEARNING OS = NORMAL OPERATION`
 
-Gate B priority:
-
-> pass the finite V1.8 seal matrix, then stop system-building and return to real Mobile-VTON work.
+The learning system supports real projects. It no longer replaces them with system testing.

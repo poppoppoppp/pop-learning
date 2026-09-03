@@ -6,7 +6,7 @@ Current Version:
 
 Current STATE_CHALLENGE:
 
-`PL18-ABE8B88F`
+`PL18F-98904BC9`
 
 # Gate A
 
@@ -14,64 +14,50 @@ Current STATE_CHALLENGE:
 
 # Gate B
 
-`RELEASE CANDIDATE / NOT YET SEALED`
+`FROZEN / OPERATIONAL WITH KNOWN LIMITATION`
 
-V1.8 preserves Anchored Concept Expansion and V1.7 precision guardrails.
+System-rule development is frozen. Learner evidence and the capability map remain dynamic.
 
-New diagnostic controls:
+# Acceptance Record
 
-- VERIFIED MUST BE DIRECTLY ENTAILED
-- DIAGNOSTIC SCOPE <= EVIDENCE SCOPE
-- FIRST-FAILURE LAYER DISCIPLINE
-- DIAGNOSTIC JARGON LINT
+- R1 PowerShell launcher regression: PASS
+- R2 ONNX opset/grid_sampler regression: PASS
+- B1 unseen concept/architecture teaching: PASS after retest
+- B2 unseen diagnostic/decision: KNOWN FAIL
+- formal REAL test: cancelled as a separate exam; real project work is now the running environment
 
-Output lint now has 13 failure modes.
+Known B2 limitation:
 
-# Finite Exit
+> Diagnostic answers may occasionally introduce assistant-created technical jargon without immediately explaining it.
 
-Gate B is no longer open-ended.
+V1.8 already contains the rule requiring such jargon to be explained, replaced, or deferred, so no V1.9 is created for this limitation alone.
 
-Seal criteria:
+# Normal Operation
 
-`system/GATE_B_SEAL_CRITERIA.md`
+For real technical/project turns:
 
-Required final matrix:
+- fresh-read `learner/CURRENT_STATE.md`
+- proactively detect material new concepts
+- explain unverified concepts before relying on them
+- verify naturally when useful
+- record genuine learner evidence
+- update mastery only from evidence
+- continue growing `ABILITY_MAP`, `LEARNING_LOG`, and dependency knowledge over time
 
-- R1 PowerShell launcher regression
-- R2 ONNX opset/grid_sampler regression
-- B1 unseen concept/architecture test
-- B2 unseen diagnostic/decision test
-- one real Mobile-VTON project turn
-
-If all five pass:
-
-`GATE B = SEALED`
-
-Then return to normal project work.
+`assistant explained it != learner mastered it`
 
 # Reopen
 
-After sealing, reopen only for a concrete material failure observed in real work.
+Do not reopen Gate B for stylistic nits or theoretical improvements.
 
-Do not reopen for speculative improvement.
+Reopen only if real project work exposes a repeated material failure affecting:
+
+- technical correctness
+- learner understanding
+- evidence discipline
+- project decision quality
+- learner-state integrity
 
 # Custom Instructions
 
 No replacement required for V1.8.
-
-# Files Changed in V1.8
-
-- `SYSTEM.md`
-- `README.md`
-- `learner/CURRENT_STATE.md`
-- `system/BOOT_GATE.md`
-- `system/TEACHING_GATE.md`
-- `system/CHANGELOG.md`
-- `system/GATE_B_SEAL_CRITERIA.md`
-
-Not changed:
-
-- `learner/ABILITY_MAP.md`
-- `evidence/LEARNING_LOG.md`
-- `concepts/DEPENDENCIES.md`
-- `system/CUSTOM_INSTRUCTIONS_BOOT.txt`
