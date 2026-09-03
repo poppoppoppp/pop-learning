@@ -1,76 +1,38 @@
 # Pop Learning OS Changelog
 
-系统 Bug 与版本变化记录。
+# V1.4.3 — 2026-09-03
 
----
+## SYSTEM BUG 007 — Citation render preflight asks the model to verify the future UI
 
-# V1.4.2 — 2026-09-03
+V1.4.2 test returned correct challenge and blob but blank STATE_SOURCE.
 
-## SYSTEM BUG 006 — STATE_SOURCE 因代码块格式无法渲染
+The flaw was architectural:
 
-### 测试现场
+> the model cannot inspect the post-send UI before sending.
 
-V1.4.1 冷启动输出：
+## SYSTEM CHANGE 023 — Citation Marker Copy
 
-- PL-LOAD ✓ V1.4.1
-- 正确 CHALLENGE
-- 正确 STATE_BLOB
-- `STATE_SOURCE =`
+Instead of “confirm it rendered”, V1.4.3 requires:
 
-但 STATE_SOURCE 为空。
+> copy the exact `Citation Marker` returned by the current-turn GitHub tool result.
 
-### 观察
+## SYSTEM CHANGE 024 — Source First, Pass Last
 
-整张 receipt 被放入 fenced code block。
+Receipt order changed to:
 
-### 根因
+1. STATE_SOURCE
+2. CHALLENGE
+3. STATE_BLOB
+4. PL-LOAD ✓
 
-V1.4.1 的：
+The success declaration is last.
 
-- “ATOMIC LOAD RECEIPT”
-- “四字段块”
-- fenced code 示例
+## SYSTEM CHANGE 025 — Challenge Rotation
 
-共同诱导模型把 receipt 当代码块输出。
+CURRENT_STATE changed, challenge rotated to:
 
-file citation 不能在代码块中正常渲染。
+`PL143-3E871B2B`
 
-### 修复
+# V1.4.2
 
-V1.4.2：
-
-1. Receipt 必须使用普通 Markdown
-2. 严禁 fenced code block / inline code
-3. STATE_SOURCE 必须真实渲染 current-turn file citation
-4. 无法渲染则：
-   `PL-LOAD FAIL: NO_RENDERED_CURRENT_TURN_CITATION`
-
----
-
-## SYSTEM CHANGE 020 — Citation-Compatible Receipt
-
-Load Receipt 从“代码块式四字段”改为：
-
-> 普通 Markdown 四行收据。
-
----
-
-## SYSTEM CHANGE 021 — Render Preflight
-
-Preflight 不只检查字段存在，还检查：
-
-> citation 是否实际可渲染。
-
----
-
-## SYSTEM CHANGE 022 — Challenge Rotation
-
-CURRENT_STATE 实质更新，因此 challenge 轮换为：
-
-`PL142-AE7AFDCB`
-
----
-
-# V1.4.1
-
-修复 citation 作为第四必填字段，但格式示例导致 citation 渲染失败。
+Attempted citation render preflight; real test showed the preflight itself was not executable before UI rendering.

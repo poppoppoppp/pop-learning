@@ -1,32 +1,22 @@
 # Pop Learning
 
-Current Version:
+Current Version: `V1.4.3`
 
-`V1.4.2`
+Current LOAD_CHALLENGE: `PL143-3E871B2B`
 
-Current LOAD_CHALLENGE:
+## Gate A
 
-`PL142-AE7AFDCB`
+Fresh-read CURRENT_STATE using connected GitHub.
 
-# Gate A
+Then copy the exact current-turn `Citation Marker` returned by that read.
 
-技术回答前 fresh-read CURRENT_STATE。
+Receipt is:
 
-成功收据：
+1. STATE_SOURCE
+2. CHALLENGE
+3. STATE_BLOB
+4. PL-LOAD ✓
 
-- 必须普通 Markdown
-- 绝对不能代码块
-- 必须包含真实渲染的 current-turn CURRENT_STATE file citation
+PASS is deliberately last.
 
-# 核心入口
-
-- SYSTEM.md
-- learner/CURRENT_STATE.md
-- learner/ABILITY_MAP.md
-- evidence/LEARNING_LOG.md
-- concepts/DEPENDENCIES.md
-- system/BOOT_GATE.md
-- system/CUSTOM_INSTRUCTIONS_BOOT.txt
-- system/CHANGELOG.md
-
-Gate B 在 V1.4.2 不变。
+Gate B is unchanged.
