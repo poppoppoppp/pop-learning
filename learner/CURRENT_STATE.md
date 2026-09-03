@@ -1,23 +1,59 @@
 # Current Learning State
 
 Updated: 2026-09-03
-Baseline: V1.3
+Baseline: V1.4
 
 # RUNTIME CARD
 
-PROTOCOL = V1.3
+PROTOCOL = V1.4
+LOAD_CHALLENGE = PL14-EC78FCAD
+
+> `LOAD_CHALLENGE` 在每次 CURRENT_STATE 发生实质更新时更换。
+> 它用于发现 stale load（读了旧状态），不是单独的 fresh-load 证明。
 
 ## GATE A — BOOT / LOAD
 
 技术、代码、AI、工程、工具链、项目原理相关回答前：
 
-1. fresh-read `learner/CURRENT_STATE.md`
-2. 没有 fresh LOAD，不声称使用最新个人能力地图
-3. 正常个性化技术回答末尾必须有：
-   `PL-LOAD ✓ V1.3`
-4. 必须附带本回合 CURRENT_STATE 的 GitHub 文件引用
-5. 读取失败则写：
+1. 必须使用已连接的 GitHub 读取能力，fresh-read：
+   `poppoppoppp/pop-learning/learner/CURRENT_STATE.md`
+2. 不允许用普通 Web 搜索、旧聊天、Memory 或“我记得”替代这一步。
+3. 读取成功后，从 GitHub 返回结果取得：
+   - 当前 `PROTOCOL`
+   - 当前 `LOAD_CHALLENGE`
+   - 当前文件 blob SHA
+   - 当前回合文件引用
+4. 正常个性化技术回答末尾必须包含：
+
+```text
+PL-LOAD ✓ V1.4
+CHALLENGE = <本回合读到的 LOAD_CHALLENGE>
+STATE_BLOB = <本回合 GitHub 返回的 blob SHA 前 8 位>
+```
+
+并紧跟本回合 `CURRENT_STATE.md` 的 GitHub 文件引用。
+
+5. 缺任何一项：
+   `Gate A = FAIL`
+6. GitHub 读取失败：
    `PL-LOAD FAIL`
+
+## GATE A PASS 的必要条件
+
+必须同时满足：
+
+- `PL-LOAD ✓ V1.4`
+- `CHALLENGE` 与当前 CURRENT_STATE 一致
+- `STATE_BLOB` 来自本回合 GitHub 返回结果
+- 存在本回合 CURRENT_STATE 文件引用
+
+注意：
+
+> `PL-LOAD ✓` 字样本身没有证明力。
+> CHALLENGE 本身也没有证明力。
+> 四项组合才作为当前系统的可验证收据。
+
+---
 
 ## GATE B — TEACHING / OUTPUT
 
@@ -159,14 +195,15 @@ Safe Anchor：
 
 # 当前系统重点
 
-此前 V1.1 / V1.2 冷启动测试暴露：
+V1.3 冷启动测试暴露：
 
-- 能找到能力地图，不等于会严格遵守教学门禁；
-- 回答可能声称“查过能力地图”，但缺乏可验证 LOAD 证据；
-- OUTPUT LINT 仍需后续继续压力测试。
+- 新对话输出了 `PL-LOAD ✓ V1.3`
+- 但没有 CURRENT_STATE 的本回合引用
+- 因此无法证明实际 fresh-read
+- 静态字符串可以被照抄，不能视作证明
 
-V1.3 当前第一优先级：
+V1.4 当前第一优先级：
 
-> 先证明每个技术回合真的 LOAD，再评教学质量。
+> 把 LOAD 证明从“自我声明”升级为“多字段收据”。
 
-BOOT / LOAD 与 Teaching / Output 必须分开验收。
+BOOT / LOAD 与 Teaching / Output 继续分开验收。
