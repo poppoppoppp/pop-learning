@@ -8,195 +8,136 @@
 
 ---
 
-# V1.2 — 2026-09-03
+# V1.3 — 2026-09-03
 
-## SYSTEM BUG 002 — V1.1 有门禁文本，但仍未真正限制输出
+## SYSTEM BUG 003 — LOAD 不可验证
 
-### 测试现场
+### 发现
 
-第二次新对话冷启动测试中，用户问：
+前几次冷启动测试里，回答有时会声称：
 
-> 为什么 Mobile-VTON 要先做 ONNX 导出可行性测试，而不是直接下载完整模型跑？
+> “我查了你的个人能力地图。”
 
-回答的项目判断本身正确：
+但仅凭回答文字，无法证明：
 
-- 先做便宜检查；
-- 提前发现可能让后续投入白费的硬障碍；
-- 再决定是否下载完整模型并复现。
-
-### 失败现象
-
-回答仍一次性引入大量未验证技术概念，包括：
-
-- Python
-- PyTorch
-- GPU
-- ONNX Runtime
-- CPU
-- NPU
-- PyTorch 操作
-- 特殊算子
-- 动态逻辑
-- 自定义模块
-- CUDA
-- 显存
-- 完整推理
-- Android
-
-这直接违反 V1.1 已写明的：
-
-- SCAN OUTPUT
-- 单层教学
-- DEFER
+- 本回合真的读取了 GitHub；
+- 读取的是最新 CURRENT_STATE；
+- 不是依赖旧上下文或模型记忆。
 
 ### 根因
 
-V1.1 虽然把 SCAN OUTPUT 称为“强制门禁”，但判断标准仍主要是自然语言原则。
+V1.2 规定了：
 
-缺少：
+> 技术回答前必须 LOAD。
 
-- 明确新概念数量预算；
-- 用户点名陌生词与真正教学概念的区别；
-- 对“项目决策问题先回答决策层”的优先级；
-- 可直接触发 DRAFT FAIL 的机械条件。
+但没有定义：
+
+> 用户如何验证 LOAD 真的发生。
+
+同时，GitHub 文件本身也无法保证全新对话会主动想起 GitHub。
 
 ### 修复
 
-V1.2 新增：
+V1.3 引入三层架构：
 
-1. `TASK ANSWER FIRST`
-2. `OPAQUE LABEL`
-3. 默认每回合最多 `1` 个 assistant-introduced `TEACH-NOW`
-4. `OUTPUT LINT` 六类明确 FAIL 条件
-5. “单层教学”重定义为“单个完整认知台阶”
+1. Custom Instructions = BOOT POINTER
+2. GitHub = Dynamic Truth
+3. Current-turn GitHub citation = LOAD PROOF
+
+并把系统拆成两个独立 Gate：
+
+- Gate A：BOOT / LOAD
+- Gate B：Teaching / Output
 
 ---
 
-## SYSTEM CHANGE 006 — OPAQUE LABEL
+## SYSTEM CHANGE 011 — Verifiable LOAD
 
-用户主动点名、代码或日志必须引用的陌生词：
+正常个性化技术回答必须带：
 
-可以作为名称存在。
+`PL-LOAD ✓ V1.3`
+
+并附本回合 CURRENT_STATE 的 GitHub 文件引用。
+
+没有 current-turn citation：
+
+> 不算 LOAD PASS。
+
+---
+
+## SYSTEM CHANGE 012 — LOAD FAILURE Mode
+
+如果 GitHub 读取失败：
+
+`PL-LOAD FAIL`
+
+允许一般事实回答。
+
+禁止声称：
+
+> 当前回答基于最新个人能力地图。
+
+---
+
+## SYSTEM CHANGE 013 — Runtime Card
+
+`learner/CURRENT_STATE.md` 顶部改成短 Runtime Card。
+
+目标：
+
+- 每回合只需先读取一个小入口；
+- 快速看到当前 Gate；
+- 快速看到 Safe / Unsafe；
+- 需要时再展开其他文件。
+
+---
+
+## SYSTEM LIMITATION 001 — BOOT persistence 不是 GitHub 自己能保证
+
+GitHub 是真相源。
 
 但：
 
-> 名字出现不等于已经掌握，也不能未经解释承担知识地基。
+> GitHub 不能自行唤醒一个完全没想起 Pop Learning OS 的新对话。
+
+因此 BOOT POINTER 推荐放在 ChatGPT Custom Instructions。
+
+Memory 可作为辅助，不作为唯一执行保障。
 
 ---
 
-## SYSTEM CHANGE 007 — 新技术概念预算
+# V1.2 — 2026-09-03
 
-普通技术回合：
+## SYSTEM BUG 002
 
-`assistant-introduced TEACH-NOW <= 1`
+V1.1 有 SCAN OUTPUT，但第二次冷启动仍大量堆叠陌生术语。
 
-只有真正不可拆分时允许 2 个。
+V1.2 新增：
 
-用户主动点名的 OPAQUE LABEL 不计入教学预算。
+- TASK ANSWER FIRST
+- OPAQUE LABEL
+- TEACH-NOW budget
+- OUTPUT LINT
+- 单个认知台阶
 
----
+结果：
 
-## SYSTEM CHANGE 008 — TASK ANSWER FIRST
-
-技术项目里的每个问题不都需要展开底层技术。
-
-如果用户先问：
-
-- 顺序
-- 风险
-- 方案
-- 下一步
-- 为什么先 A 后 B
-
-先用 Safe Anchor 回答真正的决策问题。
-
-再判断是否需要补一个技术台阶。
-
----
-
-## SYSTEM CHANGE 009 — OUTPUT LINT
-
-新增六类直接失败条件：
-
-1. TEACH-NOW 超预算
-2. 陌生词解释陌生词
-3. 陌生词串
-4. 无必要技术支线
-5. 前置知识断层
-6. 项目问题被技术课淹没
-
-触发即：
-
-`DRAFT FAIL -> REWRITE`
-
----
-
-## SYSTEM CHANGE 010 — 单个认知台阶
-
-不把教学变成：
-
-> 每句话都停下来考试。
-
-一个认知台阶可以完整包含：
-
-- 人话解释
-- 最小例子
-- 当前项目作用
-- 类比
-- 边界
-
-限制的是：
-
-> 一轮不要跨进多个新的未知技术体系。
+> 教学输出仍需继续压力测试，但更底层的 LOAD 可验证性问题优先修复。
 
 ---
 
 # V1.1 — 2026-09-03
 
-## SYSTEM BUG 001 — 冷启动后仍然堆叠陌生术语
+## SYSTEM BUG 001
 
-### 测试现场
+首次冷启动能读取能力地图，但仍大量引入未经验证术语。
 
-首次新开对话后，系统成功：
-
-- 找到 GitHub 能力地图；
-- 读取 `CURRENT_STATE.md`；
-- 识别 ONNX 为 `EXPOSED`；
-- 知道计算图、Tensor 不能直接作为 Safe Anchor；
-- 主动开始教学；
-- 主动设计验证。
-
-### 失败现象
-
-回答仍然引入多项未经验证概念，例如：
-
-- PyTorch
-- Python 环境
-- CUDA
-- 模型参数
-- ONNX Runtime
-- NPU
-- 推理引擎
-- `.pth`
-
-### V1.1 修复
-
-新增：
+V1.1 新增：
 
 - SCAN INPUT
 - BRIDGE PLAN
 - DRAFT
 - SCAN OUTPUT
 - SAFE / TEACH-NOW / DEFER
-- 单层教学
 - 原子命题状态
 - 类比退出机制
-- 系统 Bug 与学习证据分离
-
-### V1.1 结果
-
-第二次冷启动证明：
-
-> 原则方向正确，但门禁仍不够机械。
-
-因此进入 V1.2。

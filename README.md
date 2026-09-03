@@ -2,38 +2,52 @@
 
 个人能力地图与项目驱动学习系统。
 
-它记录的不是：
+Current Version:
 
-> 世界上有哪些技术知识。
+`V1.3`
 
-而是：
+Started:
 
-> pop 当前真正理解和掌握了什么。
+`2026-09-03`
 
-核心入口：
+# 核心架构
+
+```text
+ChatGPT Custom Instructions
+        ↓
+BOOT POINTER
+        ↓
+GitHub learner/CURRENT_STATE.md
+        ↓
+fresh LOAD
+        ↓
+PL-LOAD proof
+        ↓
+技术教学 / 项目协作
+```
+
+GitHub：
+
+`poppoppoppp/pop-learning`
+
+是动态学习状态长期真相源。
+
+# 核心入口
 
 - `SYSTEM.md`
 - `learner/CURRENT_STATE.md`
 - `learner/ABILITY_MAP.md`
 - `evidence/LEARNING_LOG.md`
 - `concepts/DEPENDENCIES.md`
+- `system/BOOT_GATE.md`
 - `system/CHANGELOG.md`
 
-Current Version:
+# V1.3 核心变化
 
-`V1.2`
-
-Started:
-
-`2026-09-03`
-
-## V1.2 核心变化
-
-- TASK ANSWER FIRST
-- SAFE / OPAQUE LABEL / TEACH-NOW / DEFER 四分类
-- 普通回合默认最多 1 个新的 TEACH-NOW
-- OUTPUT LINT 明确 PASS / FAIL
-- 陌生词串直接打回草稿
-- 无必要技术支线必须 DEFER
-- 单层教学改为“单个完整认知台阶”
-- SYSTEM BUG 002 已记录
+- Verifiable BOOT / LOAD Gate
+- Custom Instructions 作为最小 BOOT POINTER
+- GitHub 继续作为动态真相源
+- `PL-LOAD ✓ V1.3` + current-turn citation 作为 LOAD PROOF
+- `PL-LOAD FAIL` 降级模式
+- BOOT / LOAD 与 Teaching / Output 分开验收
+- CURRENT_STATE 顶部 Runtime Card
