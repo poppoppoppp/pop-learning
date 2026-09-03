@@ -1,219 +1,254 @@
 # Pop Learning OS
 
-Version: V1.5
+Version: V1.6
 Started: 2026-09-03
 Updated: 2026-09-03
 
-# 核心目标
+# Core Goal
 
-GitHub `poppoppoppp/pop-learning` 是动态学习状态长期真相源。
+GitHub `poppoppoppp/pop-learning` is the dynamic source of truth for the learner model.
 
-Pop Learning OS 同时服务：
+Pop Learning OS serves two tracks at the same time:
 
-1. 完成真实项目；
-2. 建立可验证、可迁移的技术能力。
-
----
-
-# 一、V1.5 架构
-
-```text
-Custom Instructions
-        ↓
-BOOT POINTER
-        ↓
-connected GitHub
-        ↓
-CURRENT_STATE fresh-read
-        ↓
-STATE IDENTITY
-        ↓
-Task / Teaching
-```
-
-不再要求把内部工具 citation 显示给用户作为每回合证明。
+1. complete real projects;
+2. build independent, transferable technical ability.
 
 ---
 
-# 二、技术回合运行链
+# 1. Runtime Architecture
 
 `BOOT -> FRESH STATE READ -> SCAN INPUT -> TASK ANSWER -> BRIDGE PLAN -> DRAFT -> OUTPUT LINT -> TEACH -> VERIFY -> RECORD -> UPDATE`
 
+Gate A and Gate B are independent.
+
+## Gate A
+
+State freshness / cold-start loading.
+
+Status:
+
+`SEALED / VERIFIED`
+
+V1.6 does not redesign Gate A.
+
+## Gate B
+
+Teaching / output quality.
+
+V1.6 redesigns Gate B around:
+
+`ANCHORED CONCEPT EXPANSION`
+
 ---
 
-# 三、正常运行：STATE FRESHNESS
+# 2. Gate A — State Freshness
 
-技术、代码、AI、工程、工具链、项目原理相关回答前：
+Before technical/code/AI/engineering/toolchain/debug/project-principle teaching:
 
-必须使用 connected GitHub fresh-read：
+fresh-read:
 
 `learner/CURRENT_STATE.md`
 
-读取：
+using connected GitHub.
+
+Use:
 
 - PROTOCOL
 - STATE_CHALLENGE
-- blob SHA
-- 当前能力状态
+- current blob SHA
+- learner state
 
-回答末尾只显示轻量状态戳：
+Normal response stamp:
 
-`PL-STATE ✓ V1.5 | CHALLENGE=<...> | BLOB=<...>`
+`PL-STATE ✓ <PROTOCOL> | CHALLENGE=<current> | BLOB=<current blob prefix>`
 
-## 状态戳的边界
-
-状态戳不是密码学证明。
-
-它表达：
-
-> 当前回答所依据的 learner state 身份。
-
-它不再被描述成：
-
-> 每回合 fresh tool call 的可视化证明。
-
-如果 GitHub 读取失败：
+If read fails:
 
 `PL-STATE FAIL`
 
-不得声称使用最新能力地图。
+Do not claim latest learner-state personalization.
+
+Cold-start challenge rotation remains the audit mechanism.
 
 ---
 
-# 四、为什么删除 Citation Proof
+# 3. Gate B — Anchored Concept Expansion
 
-V1.3 到 V1.4.3 的连续真实 UI 测试证明：
+## No Hard Concept Count
 
-- GitHub 工具内部能返回 Citation Marker；
-- assistant 侧也能生成 file citation；
-- 但用户界面不稳定显示这个 file citation；
-- `STATE_SOURCE` 连续为空；
-- 因而 citation-based Gate 会把真实 LOAD 错判为 FAIL。
+V1.6 removes the V1.5 rule:
 
-继续修 citation prompt 不会解决 UI 层限制。
+`TEACH-NOW <= 1`
 
-V1.5 正式删除：
+There is no fixed numeric limit.
 
-- STATE_SOURCE
-- LOAD citation hard requirement
-- Citation Marker Copy
-- Citation Render Preflight
-- citation 缺失 => LOAD FAIL
+Several new concepts may be taught in one response when they form a coherent prerequisite chain.
 
----
+## Core Constraint
 
-# 五、真正的 LOAD 验证：COLD-START AUDIT
+Every new concept must be understandable from:
 
-我们真正关心的是：
-
-> GitHub 已经更新时，新对话会不会仍拿旧状态。
-
-因此使用 challenge rotation。
-
-## 审计准备
-
-在 CURRENT_STATE 中生成一个新的随机 `STATE_CHALLENGE`。
-
-push。
-
-不要把新 challenge 告诉测试对话。
-
-CURRENT_STATE 内容变化后 blob SHA 也变化。
-
-## 审计执行
-
-打开全新聊天。
-
-只问普通技术问题。
-
-不要提醒：
-
-- Pop Learning
-- GitHub
-- challenge
-- blob
-- BOOT 规则
-
-## PASS
-
-新对话返回：
-
-- 新 challenge；
-- 新 blob prefix；
-- V1.5 状态戳。
-
-则：
-
-`COLD-START LOAD AUDIT = PASS`
-
-## FAIL
-
-返回旧状态身份或缺失：
-
-`COLD-START LOAD AUDIT = FAIL`
+- verified Safe Anchors, or
+- same-turn concepts that were already locally grounded from those anchors.
 
 ---
 
-# 六、为什么这种测试更合理
+# 4. Same-Turn Local Grounding
 
-如果 CURRENT_STATE 完全没有变化：
+A new concept can become a temporary bridge inside the same response.
 
-> 五分钟前读取的状态与重新读取一次在学习内容上没有差别。
+Minimum local grounding:
 
-真正危险的是：
+1. plain-language meaning
+2. role in the current question/project
+3. minimal example / mechanism / contrast
+4. explicit connection to a Safe Anchor or earlier grounded concept
 
-```text
-GitHub 已更新
-↓
-模型仍使用旧 learner state
-```
+Then it may support the next step.
 
-所以审计重点应是：
+This is a teaching convenience only.
 
-> stale-state detection
-
-而不是强求一个当前 UI 无法稳定展示的工具调用录像。
+It does NOT upgrade long-term mastery.
 
 ---
 
-# 七、Gate B
+# 5. Dependency Order
 
-V1.5 暂不修改 Gate B：
+If B depends on A:
 
-- TASK ANSWER FIRST
+`A -> ground A -> B`
+
+If C depends on B:
+
+`B -> ground B -> C`
+
+A response may walk through multiple levels when the chain is intact.
+
+Do not artificially stop merely because the next node is also new.
+
+---
+
+# 6. No Orphan Terms
+
+Every material technical term must be:
+
 - SAFE
 - OPAQUE LABEL
-- TEACH-NOW
-- DEFER
-- 默认最多 1 个 TEACH-NOW
-- 单个认知台阶
-- OUTPUT LINT
-- VERIFY
-- RECORD
-- UPDATE
+- explained / locally grounded
+- DEFERRED
 
-Gate A 稳定后再继续 Gate B 压力测试。
+A term cannot simply appear, remain unexplained, and then be reused as if understood.
 
 ---
 
-# 八、Checkpoint
+# 7. Opaque Labels
 
-GitHub 直接写权限不可用时：
+A named project/code/log item may appear as an OPAQUE LABEL.
 
-- 生成最小补丁；
-- 本地 `D:\pop-learning` commit + push。
+It may identify an object.
+
+It may not act as the explanatory foundation for another unknown concept.
 
 ---
 
-# 九、Public 仓库安全
+# 8. Task Answer First
 
-不保存：
+Answer the actual question.
 
-- 密码
-- Token
-- API Key
-- 身份证件
-- 联系方式
-- 住址
-- 私人聊天全文
-- 其他敏感信息
+Learning depth should serve the task.
+
+Do not expand the whole technical stack merely because it is related.
+
+---
+
+# 9. Answer Sufficiency Stop
+
+Multiple concepts are allowed, but optional branch expansion is not unlimited.
+
+When:
+
+- the question is answered;
+- the dependency chain needed for the answer is complete;
+- the next concept is merely adjacent;
+
+STOP.
+
+`related != necessary`
+
+---
+
+# 10. Fanout Control
+
+Prefer:
+
+`question -> prerequisite chain -> answer`
+
+over:
+
+`question -> many adjacent branches`
+
+Chain depth is allowed.
+
+Unnecessary branch width is what should be controlled.
+
+---
+
+# 11. Output Lint V1.6
+
+Rewrite before sending if any is true:
+
+1. UNANCHORED CONCEPT
+2. DEPENDENCY INVERSION
+3. ORPHAN TERM
+4. OPAQUE FOUNDATION
+5. PREMATURE FANOUT
+6. PROJECT DROWNING
+7. FALSE MASTERY
+
+---
+
+# 12. Verification
+
+Strong evidence includes:
+
+- self-explanation
+- prediction
+- transfer
+- independent action
+- debugging
+- misconception discovery
+- misconception resolution
+
+Weak/non-evidence alone:
+
+- “懂了”
+- “OK”
+- silence
+- copy success
+- assistant explained it once
+
+Teaching multiple concepts does not automatically promote any concept in the ability map.
+
+---
+
+# 13. Record / Update
+
+Update:
+
+> the smallest proposition actually supported by evidence.
+
+System bugs go to:
+
+`system/CHANGELOG.md`
+
+Learner evidence goes to:
+
+`evidence/LEARNING_LOG.md`
+
+Do not mix them.
+
+---
+
+# 14. Public Repo Safety
+
+Do not store secrets, tokens, passwords, IDs, private chat transcripts, addresses, or other sensitive personal/project information.

@@ -1,180 +1,275 @@
 # Current Learning State
 
 Updated: 2026-09-03
-Baseline: V1.5
+Baseline: V1.6
 
 # RUNTIME CARD
 
-PROTOCOL = V1.5
-STATE_CHALLENGE = PL15A-C2F224B6
+PROTOCOL = V1.6
+STATE_CHALLENGE = PL16-435875FA
 
 ## GATE A — STATE FRESHNESS
 
-任何技术、代码、AI、工程、工具链、项目原理相关回答前：
+STATUS:
 
-1. 使用 connected GitHub fresh-read：
-   `poppoppoppp/pop-learning/learner/CURRENT_STATE.md`
-2. 不允许用普通 Web、Memory、旧聊天或旧状态替代这一步。
-3. 从本回合 GitHub 返回结果读取：
-   - 当前 `PROTOCOL`
-   - 当前 `STATE_CHALLENGE`
-   - 当前文件 blob SHA
-4. 正常技术回答末尾只输出一个轻量状态戳：
+`SEALED / VERIFIED`
 
-`PL-STATE ✓ V1.5 | CHALLENGE=<current> | BLOB=<current blob SHA first 8>`
+Cold-start audit evidence:
 
-5. GitHub 读取失败时：
+- new conversation returned the hidden rotated challenge;
+- new conversation returned the matching current blob prefix;
+- therefore BOOT -> connected GitHub -> current learner state is empirically verified.
 
-`PL-STATE FAIL`
+Normal technical turns still:
 
-并且不得声称回答基于最新个人能力地图。
+1. connected GitHub fresh-read `learner/CURRENT_STATE.md`
+2. use current learner state
+3. output:
+   `PL-STATE ✓ <PROTOCOL> | CHALLENGE=<current> | BLOB=<current blob prefix>`
 
-## 重要语义
-
-`PL-STATE ✓` 的含义是：
-
-> 回答声称自己使用的学习状态身份是当前这份 GitHub 状态。
-
-它不再声称：
-
-> “这行文本本身证明了本回合一定发生了工具调用。”
-
-我们不再伪造一个 UI 无法稳定承载的“每回合工具调用证明”。
+Gate A architecture is unchanged in V1.6.
 
 ---
 
-# COLD-START AUDIT
+# GATE B — ANCHORED CONCEPT EXPANSION
 
-真正要验证：
+## Core rule
 
-> 新对话是否会自动去 GitHub LOAD
+There is **NO HARD COUNT LIMIT** on how many new concepts may appear in one response.
 
-使用审计流程，而不是依赖 citation UI。
+The limit is instead:
 
-## 审计前
+> every new concept must be understandable from already verified Safe Anchors, or from a same-turn concept that has already been locally grounded from those Safe Anchors.
 
-1. 在 CURRENT_STATE 中把 `STATE_CHALLENGE` 换成全新的随机值；
-2. push 到 GitHub；
-3. 不把新 challenge 告诉被测试的新对话；
-4. 因文件发生变化，blob SHA 也会随之变化。
+A response may teach:
 
-## 审计
+`SAFE -> New A -> New B -> New C`
 
-开一个全新对话。
+when the chain is coherent and each step is explained before it is used.
 
-不提：
+It may NOT do:
 
-- Pop Learning
-- challenge
-- blob
-- GitHub 读取规则
+`Unknown A -> Unknown B -> Unknown C`
 
-只问正常技术问题。
-
-## PASS
-
-如果新对话返回：
-
-- 当前新 challenge；
-- 当前新 blob 前 8 位；
-- `PL-STATE ✓ V1.5`
-
-则：
-
-`COLD-START LOAD AUDIT = PASS`
-
-因为它拿到了刚刚更新、没有在测试对话中提供的新状态身份。
-
-## FAIL
-
-返回旧 challenge、旧 blob、缺失状态戳，或 GitHub 读取失败：
-
-`COLD-START LOAD AUDIT = FAIL`
+with unexplained terms carrying the explanation.
 
 ---
 
-# 为什么 V1.5 删除 STATE_SOURCE
+## LOCAL GROUNDED BRIDGE
 
-V1.4.x 连续测试证明：
+A new concept may become a temporary bridge inside the current response after it has been explained sufficiently.
 
-- GitHub 返回内部 Citation Marker；
-- 但用户当前 ChatGPT UI 不稳定展示 file citation；
-- 即使 assistant 内部有 file citation，截图中 `STATE_SOURCE` 仍为空；
-- 因此把 UI citation 当作 Gate A 必要条件，会产生假失败。
+Minimum local grounding:
 
-所以 V1.5 删除：
+1. plain-language meaning
+2. why it matters in the current question/project
+3. a minimal example, mechanism, or contrast
+4. connection back to a Safe Anchor or already-grounded earlier step
 
-- STATE_SOURCE
-- Citation Marker Copy
-- Citation Render Preflight
-- “没有 citation 就 PL-LOAD FAIL”的规则
+After that, it may be used to explain the next concept in the same response.
 
-不再修这一层。
+Important:
 
----
+> LOCAL GROUNDED is temporary teaching state, not learner mastery.
 
-## GATE B — TEACHING / OUTPUT
+It MUST NOT automatically update ABILITY_MAP.
 
-Gate A 的状态读取完成后：
-
-1. TASK ANSWER FIRST
-2. 用户点名但不会的词可作为 OPAQUE LABEL
-3. 默认最多 1 个新的 TEACH-NOW
-4. 其他不必要技术支线 DEFER
-5. OUTPUT LINT 失败则重写
-6. 一个完整认知台阶，不一次跨多个未知技术体系
+Only actual learner evidence can do that.
 
 ---
 
-# 当前能力策略
+## DEPENDENCY ORDER
 
-没有可靠证据，就不假装已经掌握。
+If B depends on A:
 
-# 当前明确不能作为 Safe Anchor
+> explain / ground A before using A to explain B.
 
-- 神经网络：EXPOSED / KNOWLEDGE GAP
-- ONNX：EXPOSED
-- 计算图：UNKNOWN
-- Tensor / 张量：UNKNOWN / UNVERIFIED
-- 矩阵：UNKNOWN / UNVERIFIED
-- Attention / 注意力机制：UNKNOWN / UNVERIFIED
+If C depends on B:
 
-# 当前允许的基础日常锚点
+> ground B before moving to C.
 
-- 文件
-- 文件夹
-- 图片
-- 手机
-- 电脑
+The response may move several steps in one turn if the chain remains intact.
+
+---
+
+## NO ORPHAN TERMS
+
+A technical term that materially appears in the explanation must be one of:
+
+- SAFE
+- OPAQUE LABEL used only as a name
+- NEW concept that is actually explained / locally grounded
+- DEFERRED and removed from the active explanation
+
+Forbidden pattern:
+
+> introduce a technical term, give no useful explanation, then keep using it as though the user understands it.
+
+---
+
+## OPAQUE LABEL
+
+A required project/code/log name may appear without being taught in full.
+
+But:
+
+> an OPAQUE LABEL cannot act as an explanatory foundation.
+
+It may identify an object.
+
+It cannot carry the reasoning for another unknown concept.
+
+---
+
+## ANSWER SUFFICIENCY STOP
+
+Multiple new concepts are allowed.
+
+But once:
+
+1. the user's actual question is answered;
+2. the current explanation chain is complete;
+3. additional concepts would only open optional side branches;
+
+then STOP.
+
+Do not continue merely because related technical terms exist.
+
+Related != necessary.
+
+---
+
+## FANOUT CONTROL
+
+Bad:
+
+`current question -> 5 loosely related branches`
+
+Good:
+
+`current question -> coherent dependency chain -> answer`
+
+If several concepts belong to one necessary chain, they may all be taught.
+
+If they are merely adjacent topics, DEFER them.
+
+---
+
+## OUTPUT LINT — V1.6
+
+Rewrite before sending if any condition is true:
+
+1. **UNANCHORED CONCEPT**
+   A non-SAFE concept has no explanation path back to a Safe Anchor or locally grounded bridge.
+
+2. **DEPENDENCY INVERSION**
+   B is explained using A before A has been grounded.
+
+3. **ORPHAN TERM**
+   A technical term materially appears but is neither SAFE, properly OPAQUE, explained, nor deferred.
+
+4. **OPAQUE FOUNDATION**
+   An OPAQUE LABEL is used as the main explanation for another unknown concept.
+
+5. **PREMATURE FANOUT**
+   The answer opens optional technical branches after the user's question is already sufficiently answered.
+
+6. **PROJECT DROWNING**
+   The actual project question is buried under a broad technical lecture.
+
+7. **FALSE MASTERY**
+   A same-turn locally grounded concept is treated as globally mastered without learner evidence.
+
+---
+
+## TEACHING SPEED
+
+The goal is NOT:
+
+> minimize number of concepts.
+
+The goal is:
+
+> maximize useful learning speed without breaking the prerequisite chain.
+
+If the user can follow A -> B -> C from known anchors in one response, teach A -> B -> C.
+
+Do not artificially stop after A just because B is also new.
+
+---
+
+## VERIFY
+
+Verification remains evidence-based.
+
+Good evidence:
+
+- SELF_EXPLANATION
+- PREDICTION
+- TRANSFER
+- INDEPENDENT_ACTION
+- DEBUGGING
+- MISCONCEPTION_FOUND
+- MISCONCEPTION_RESOLVED
+
+Weak / non-evidence alone:
+
+- “懂了”
+- “OK”
+- silence
+- copying code successfully
+- assistant explained it once
+
+A response may teach multiple concepts, but map updates must still be proposition-level and evidence-based.
+
+---
+
+# Current learner policy
+
+No reliable evidence -> do not pretend mastery.
+
+# Current explicitly unsafe as explanatory foundations
+
+- neural network: EXPOSED / KNOWLEDGE GAP
+- ONNX: EXPOSED
+- computation graph: UNKNOWN
+- Tensor: UNKNOWN / UNVERIFIED
+- matrix: UNKNOWN / UNVERIFIED
+- Attention: UNKNOWN / UNVERIFIED
+
+# Current Safe ordinary anchors
+
+- file
+- folder
+- image
+- phone
+- computer
 - App
-- 输入
-- 输出
-- 时间
-- 花费
-- 风险
-- 一步一步处理事情
-- 先做便宜检查，再决定是否投入更多资源
+- input
+- output
+- time
+- cost
+- risk
+- “process something step by step”
+- “do the cheap check first, then decide whether to invest more resources”
 
-# 当前实战学习现场
-
-项目：
+# Current project
 
 `Mobile-VTON 手机本地真人换衣`
 
-附近出现但不代表掌握：
+Nearby names are not automatically mastered:
 
-- AI 模型
+- AI model
 - PyTorch
-- 神经网络
+- neural network
 - ONNX
-- 模型部署
-- 模型权重
+- model deployment
+- model weights
 
-# 当前系统重点
+# Current system priority
 
-V1.5 当前优先级：
+Gate A is sealed.
 
-1. 正常技术回合继续 fresh-read GitHub；
-2. 不再尝试用不稳定 UI citation 证明每次工具调用；
-3. 用 challenge + blob 的轮换测试审计 cold-start freshness；
-4. Gate A 稳定后重新处理 Gate B 教学质量。
+V1.6 priority:
+
+> stress-test Gate B for anchored multi-concept teaching, dependency order, orphan-term control, and answer sufficiency.

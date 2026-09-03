@@ -1,5 +1,131 @@
 # Pop Learning OS Changelog
 
+# V1.6 — 2026-09-03
+
+## SYSTEM BUG 009 — Hard one-concept budget is too restrictive
+
+### Observation
+
+V1.5 Gate B said:
+
+`default max 1 TEACH-NOW`
+
+This prevented jargon dumping, but it also overcorrected.
+
+The learner explicitly clarified:
+
+> multiple new concepts in one conversation are acceptable when they are explained clearly from concepts already understood.
+
+### Root cause
+
+The system confused:
+
+> fewer new concepts
+
+with:
+
+> better teaching.
+
+Those are not equivalent.
+
+### Fix
+
+V1.6 replaces fixed concept count with:
+
+`ANCHORED CONCEPT EXPANSION`
+
+---
+
+## SYSTEM CHANGE 030 — No Hard Concept Count
+
+Removed:
+
+`TEACH-NOW <= 1`
+
+There is no fixed numeric ceiling.
+
+---
+
+## SYSTEM CHANGE 031 — Local Grounded Bridge
+
+A same-turn new concept may become a temporary bridge after it is sufficiently explained from known anchors.
+
+This enables:
+
+`SAFE -> New A -> New B -> New C`
+
+inside one response.
+
+But:
+
+`LOCAL GROUNDED != long-term mastery`
+
+No ability-map promotion without learner evidence.
+
+---
+
+## SYSTEM CHANGE 032 — Dependency Order Required
+
+If B depends on A:
+
+`ground A before B`
+
+If C depends on B:
+
+`ground B before C`
+
+---
+
+## SYSTEM CHANGE 033 — No Orphan Terms
+
+Every material technical term must be:
+
+- SAFE
+- OPAQUE
+- explained / locally grounded
+- DEFERRED
+
+Unexplained terms cannot silently carry the explanation.
+
+---
+
+## SYSTEM CHANGE 034 — Answer Sufficiency Stop
+
+Multiple concepts are allowed.
+
+Optional side branches are not.
+
+When the actual question and its necessary dependency chain are complete:
+
+`STOP`
+
+---
+
+## SYSTEM CHANGE 035 — Fanout Control
+
+V1.6 distinguishes:
+
+- useful chain depth
+- unnecessary branch width
+
+Deep coherent chains may be taught.
+
+Loose technical fanout should be deferred.
+
+---
+
+## SYSTEM CHANGE 036 — Version-Agnostic State Stamp Instruction
+
+Custom Instructions now use:
+
+`PL-STATE ✓ <current PROTOCOL>`
+
+instead of hard-coding a specific version number.
+
+This preserves the Gate A architecture while reducing future custom-instruction churn.
+
+---
+
 # V1.5 — 2026-09-03
 
 ## SYSTEM BUG 008 — Citation proof depends on UI behavior outside prompt control
@@ -68,3 +194,4 @@ If the state has not changed, repeated reads of identical content are not materi
 Attempted Citation Marker Copy.
 
 Real UI testing showed the citation proof layer remained unavailable to the user.
+

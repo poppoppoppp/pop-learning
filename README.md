@@ -1,28 +1,51 @@
 # Pop Learning
 
-Current Version: `V1.5`
+Current Version:
 
-Current STATE_CHALLENGE: `PL15-0E828B7B`
+`V1.6`
 
-# Normal Technical Turn
+Current STATE_CHALLENGE:
 
-1. connected GitHub fresh-read `learner/CURRENT_STATE.md`
-2. use current learner state
-3. output compact state stamp
+`PL16-435875FA`
 
-`PL-STATE ✓ V1.5 | CHALLENGE=<...> | BLOB=<...>`
+# Gate A
 
-No STATE_SOURCE.
+`SEALED / VERIFIED`
 
-# Cold-Start Audit
+Connected GitHub -> CURRENT_STATE cold-start loading has passed hidden challenge audit.
 
-To verify BOOT -> GitHub LOAD:
+# Gate B
 
-1. rotate `STATE_CHALLENGE`
-2. push
-3. do not reveal the new value to the test conversation
-4. open a new chat
-5. ask an ordinary technical question
-6. verify that the answer reports the new challenge and new blob prefix
+V1.6 introduces:
 
-Gate B teaching rules are unchanged in V1.5.
+`ANCHORED CONCEPT EXPANSION`
+
+Core rule:
+
+> no fixed limit on new concept count; every new concept must be connected to verified anchors through a coherent dependency chain.
+
+Key controls:
+
+- LOCAL GROUNDED BRIDGE
+- DEPENDENCY ORDER
+- NO ORPHAN TERMS
+- OPAQUE LABEL cannot be explanatory foundation
+- ANSWER SUFFICIENCY STOP
+- FANOUT CONTROL
+- FALSE MASTERY prevention
+
+Detailed Gate B:
+
+`system/TEACHING_GATE.md`
+
+# Core Files
+
+- `SYSTEM.md`
+- `learner/CURRENT_STATE.md`
+- `learner/ABILITY_MAP.md`
+- `evidence/LEARNING_LOG.md`
+- `concepts/DEPENDENCIES.md`
+- `system/BOOT_GATE.md`
+- `system/TEACHING_GATE.md`
+- `system/CUSTOM_INSTRUCTIONS_BOOT.txt`
+- `system/CHANGELOG.md`
