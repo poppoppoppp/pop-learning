@@ -1,5 +1,120 @@
 # Pop Learning OS Changelog
 
+# V1.7 — 2026-09-03
+
+## SYSTEM BUG 010 — Prior-knowledge claims can outrun learner evidence
+
+### Observation
+
+A Gate B stress test said:
+
+> “你已经知道 CPU / GPU ...”
+
+but the current learner state did not list CPU/GPU as verified Safe Anchors.
+
+### Root cause
+
+The assistant may remember that a topic appeared before and silently upgrade:
+
+`EXPOSED -> MASTERED`
+
+without evidence.
+
+### Fix
+
+Add:
+
+`EVIDENCE-BOUND PRIOR KNOWLEDGE`
+
+Before claiming that the learner already knows something, require current evidence.
+
+---
+
+## SYSTEM BUG 011 — Pedagogical simplification can sound like a universal mechanism
+
+### Observation
+
+Two consecutive stress tests contained explanations that were useful for beginners but phrased too absolutely.
+
+Examples of the risk:
+
+- describing one possible ONNX export behavior as though it were the universal export mechanism
+- describing one possible Android execution fallback path as though it always happens
+
+### Root cause
+
+The system checked prerequisite clarity, but did not separately check whether a teaching simplification preserved the mechanism's important boundaries.
+
+### Fix
+
+Add:
+
+`SIMPLIFICATION BOUNDARY`
+
+---
+
+## SYSTEM CHANGE 037 — Evidence-Bound Prior Knowledge
+
+Claims such as:
+
+- “你已经知道”
+- “你已经掌握”
+- “我们前面已经学会”
+
+now require current learner evidence.
+
+Prior exposure is not sufficient.
+
+---
+
+## SYSTEM CHANGE 038 — Simplification Boundary
+
+If a simplified explanation omits conditions that could materially change the conclusion, add a concise boundary.
+
+Target:
+
+`simple + decision-safe`
+
+---
+
+## SYSTEM CHANGE 039 — Illustration Is Not Fact
+
+Toy numbers, hypothetical flows, analogies, and imagined examples must be visibly labeled.
+
+Do not silently turn an illustration into a claim about Mobile-VTON's actual implementation.
+
+---
+
+## SYSTEM CHANGE 040 — Project Truth Status
+
+When project-specific truth status matters for decisions, distinguish:
+
+- VERIFIED
+- HYPOTHESIS / LIKELY
+- UNKNOWN / NEEDS TEST
+
+---
+
+## SYSTEM CHANGE 041 — Output Lint V1.7
+
+Add three hard lint failures:
+
+8. EVIDENCELESS PRIOR-KNOWLEDGE CLAIM
+9. UNSAFE SIMPLIFICATION
+10. UNLABELED ILLUSTRATION
+
+The original V1.6 seven checks remain active.
+
+---
+
+## SYSTEM CHANGE 042 — No Custom Instructions Rewrite Needed
+
+V1.6 already made the Boot Pointer version-agnostic and instructed it to obey the current Gate B loaded from CURRENT_STATE.
+
+Therefore V1.7 does not require another Custom Instructions replacement.
+
+---
+
 # V1.6 — 2026-09-03
 
 ## SYSTEM BUG 009 — Hard one-concept budget is too restrictive
